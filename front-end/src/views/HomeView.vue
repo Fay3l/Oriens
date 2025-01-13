@@ -41,8 +41,8 @@ const value = ref(null);
             </div>
 
           </div>
-          <div class="flex flex-row gap-3">
-            <IftaLabel>
+          <div class="lg:flex flex-row gap-3 ">
+            <IftaLabel >
               <InputText id="metier" v-model="value" placeholder="Ingénieur" variant="filled" />
               <label for="username">Métier, certification</label>
             </IftaLabel>
@@ -60,22 +60,24 @@ const value = ref(null);
 
     </header>
     <section class="who-are-we">
-      <div class="flex flex-row items-center justify-center gap-1 m-2">
-        <p class="qui-nous-sommes-text text-5xl ">Qui sommes </p>
+      <div class=" lg:flex flex-row items-center justify-center gap-1 m-2 sm: flex items-center m-5 ">
+        <p class="qui-nous-sommes-text lg:text-5xl sm:text-xl ">Qui sommes </p>
         <div class="flex flex-col gap-2">
-          <p class="qui-nous-sommes-text text-5xl ml-1 mt-4">nous</p>
-          <img src="./../images/trait_orange.svg" class=" w-25 h-2  ">
+          <p class="qui-nous-sommes-text lg:text-5xl sm:text-xl mt-4">nous</p>
+          <img src="./../images/trait_orange.svg" class=" lg: w-25 h-2 sm: collapse  ">
         </div>
-        <p class="qui-nous-sommes-text text-5xl">?</p>
+        <p class="qui-nous-sommes-text lg:text-5xl sm:text-sm ">?</p>
       </div>
-      <p class="m-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce quis vestibulum urna. Etiam consequat tortor ut
+      <p class="m-4 text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce quis vestibulum urna.
+        Etiam consequat tortor ut
         lacus feugiat efficitur. Suspendisse interdum dui at nibh mattis vehicula. 
       </p>
       <div class="flex flex-row justify-around gap-10">
         <div v-for="i in 3" class="flex flex-col items-center gap-1">
           <img src="./../images/icons-search.svg" class="h-10 w-10">
           <p class="font-bold">Qui sommes nous ?</p>
-          <p class="text-xs">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam.</p>
+          <p class="text-xs">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+            invidunt ut labore et dolore magna aliquyam.</p>
           <p class="text-xs text-orange-600"> Découvrir la suite</p>
         </div>
       </div>
@@ -83,11 +85,26 @@ const value = ref(null);
 
     <section class="trainings">
       <h2>Nos formations</h2>
-      <div class="grid grid-cols-2 gap-5">
+      <p>Choisissez la formation qui vous ressemble </p>
+      <div class="grid grid-cols-2 gap-20">
         <div v-for="i in 4">
-          <div class="m-5 relative">
-            <img src="./../images/image_pack.png">
-            <div class="absolute inset-x-0 bottom-0 h-20  border-solid border-blue-700 border-2 "> Pack essentiel</div>
+          <div class="lg:m-20 sm:m-5 relative ">
+            <img class=" w-full h-full" src="./../images/image_pack.png">
+            <div class="absolute inset-x-0 bottom-0 lg:h-[25rem] sm:h-[20rem] bg-gradient-to-t from-blue-800 to-transparent">
+              <div class="absolute inset-x-0 bottom-0 ">
+                <div class="flex flex-row justify-between m-4 items-center ">
+                  <div>
+                    <p class="font-bold text-white m-1 lg:text-2xl md:text-lg sm:text-sm">Pack découverte</p>
+                    <p class="text-white m-1 sm:text-sm">Test de personnalité et 2 tests d'orientation à l'année</p>
+                    <p class="text-white m-1 sm:text-sm">Découvrir</p>
+                  </div>
+                  <div class="flex flex-col gap-1 items-center ">
+                    <img src="../images/list_profils.svg" class="sm:invisible lg:visible" >
+                    <p class="text-white sm:text-sm">+ 30 membres</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

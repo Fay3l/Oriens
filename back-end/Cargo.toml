@@ -12,5 +12,6 @@ jsonwebtoken = "7.2"
 bcrypt = "0.10"
 chrono = "0.4.39"
 tower-http = {version="0.6.2",features=["cors"]}
+actix-web = "4.9.0"
 
 

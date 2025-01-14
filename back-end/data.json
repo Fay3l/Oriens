@@ -1,1 +1,26 @@
-[{"username":"Fay3l","name":"Fayel","surname":"Mohamed","address":"10 rue avenue Jean Vilar","age":16,"password":"$2b$12$JZnXgfvYGYb1yM8tQ3Jk.ekOrCp1hBkcBx9vmD.sda2.7jY/deOta"}]
+[
+  {
+    "username": "Fay3l",
+    "name": "Fayel",
+    "surname": "Mohamed",
+    "address": "10 rue avenue Jean Vilar",
+    "age": 16,
+    "password": "$2b$12$/GqwDaZi6LVjXdZAVIs0b.TuzKDex9x9YutaiOsDt47Y0aIPx411e",
+    "experience": 30,
+    "badges": [
+      "Novice"
+    ]
+  },
+  {
+    "username": "user1",
+    "name": "Fayel",
+    "surname": "Mohamed",
+    "address": "8 rue avenue Jean Vilar",
+    "age": 17,
+    "password": "$2b$12$A.Vw/hT7ZMR4r6Hed3kItecrGWZrBr30oKe57QmWS27esi9SaLYo.",
+    "experience": 10,
+    "badges": [
+      "Novice"
+    ]
+  }
+]

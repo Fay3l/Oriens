@@ -6,9 +6,10 @@
     "address": "10 rue avenue Jean Vilar",
     "age": 16,
     "password": "$2b$12$/GqwDaZi6LVjXdZAVIs0b.TuzKDex9x9YutaiOsDt47Y0aIPx411e",
-    "experience": 30,
+    "experience": 50,
     "badges": [
-      "Novice"
+      "Novice",
+      "Intermediate"
     ]
   },
   {

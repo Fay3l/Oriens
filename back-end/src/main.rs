@@ -1,34 +1,29 @@
 mod models;
 use actix_web::{HttpRequest, HttpResponse, Responder};
 use axum::extract::Request;
-use axum::http::{self, StatusCode};
-use axum::http::Method;
+use axum::http::{self, StatusCode,Method};
+use axum::middleware::{from_fn, Next};
+use axum::response::Response;
 use axum::routing::post;
-use axum::Json;
-use axum::{response::Html, routing::get, Router};
+use axum::{response::Html, routing::get, Router,Json,response::IntoResponse};
 use bcrypt::{hash, verify, DEFAULT_COST};
 use chrono;
-use jsonwebtoken::decode;
-use jsonwebtoken::DecodingKey;
-use jsonwebtoken::Validation;
-use jsonwebtoken::{encode, EncodingKey, Header};
+use jsonwebtoken::{encode, EncodingKey, Header,decode,DecodingKey,Validation};
 use models::{Badge, Claims, User, UserLogin};
 use serde_json::json;
-use std::fs::File;
-use std::fs::OpenOptions;
+use std::fs::{File,OpenOptions};
 use std::io::{self, BufReader, Read, Seek, Write};
-use tower_http::cors::Any;
-use tower_http::cors::CorsLayer;
+use tower_http::cors::{Any,CorsLayer};
 
 #[tokio::main]
 async fn main() {
     let cors = CorsLayer::new()
         .allow_origin(Any)
-        .allow_methods([Method::GET, Method::POST, Method::DELETE])
-        .allow_headers([http::header::CONTENT_TYPE]);
+        .allow_methods(Any)
+        .allow_headers(Any);
     // build our application with a route
     let app = Router::new()
-        .route("/api", get(handler))
+        .route("/api", get(handler).layer(from_fn(validate_token)))
         .route("/api/register", post(register_user))
         .route("/api/login", post(login_user))
         .layer(cors);
@@ -41,16 +36,20 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-fn protected_handler(req: HttpRequest) -> impl Responder {
-    let token = req.headers().get("Authorization").and_then(|value| value.to_str().ok()).unwrap_or("");
+async fn validate_token(req: Request, next: Next)-> Result<Response,(StatusCode,Json<serde_json::Value>)>{
+    let auth_header = req.headers().get("Authorization");
 
-    match validate_jwt(token) {
-        Ok(claims) => {
-            // Utiliser les claims pour autoriser ou refuser l'accès
-            HttpResponse::Ok().body(format!("Welcome, user with ID: {}", claims.sub))
+    if let Some(auth_header) = auth_header {
+        let token = auth_header.to_str().unwrap().replace("Bearer ", "");
+        let validation = Validation::default();
+        match decode::<Claims>(&token, &DecodingKey::from_secret("secret".as_ref()), &validation) {
+            Ok(_) => return Ok(next.run(req).await),
+            Err(_) => return Err((StatusCode::UNAUTHORIZED, Json(json!({"error": "Invalid token"})))),
         }
-        Err(_) => HttpResponse::Unauthorized().body("Invalid token"),
     }
+
+    Err((StatusCode::UNAUTHORIZED, Json(json!({"error": "Missing token"}))))
+    
 }
 
 async fn register_user(Json(payload): Json<User>) -> Json<serde_json::Value> {
@@ -226,16 +225,7 @@ fn load_user(username: &str) -> Result<User, Box<dyn std::error::Error>> {
     Err("User not found".into())
 }
 
-fn validate_jwt(token: &str) -> Result<Claims, Box<dyn std::error::Error>> {
-    let validation = Validation::default();
-    let token_data = decode::<Claims>(
-        token,
-        &DecodingKey::from_secret("secret".as_ref()),
-        &validation,
-    )?;
 
-    Ok(token_data.claims)
-}
 
 async fn handler() -> Html<&'static str> {
 

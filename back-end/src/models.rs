@@ -29,3 +29,17 @@ pub struct Claims {
     pub sub: String,
     pub exp: usize,
 }
+#[derive(Serialize,Clone, Deserialize, Debug)]
+pub struct FormatCourt {
+    pub r#type: String,
+    pub libelle: String,
+    pub descriptif: String,
+}
+#[derive(Serialize,Clone, Deserialize, Debug)]
+pub struct Metier {
+    pub nom_metier: String,
+    pub acces_metier: String,
+    pub competences: String,
+    pub condition_travail: String,
+    pub formats_courts: Option<Vec<FormatCourt>>,
+}

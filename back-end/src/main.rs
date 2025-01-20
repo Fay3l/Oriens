@@ -1,24 +1,32 @@
 mod models;
-use actix_web::{HttpRequest, HttpResponse, Responder};
-use axum::extract::Request;
+mod database;
+use axum::extract::{Query, Request};
 use axum::http::StatusCode;
 use axum::middleware::{from_fn, Next};
-use axum::response::Response;
-use axum::routing::post;
-use axum::Error;
-use axum::{response::Html, routing::get, Json, Router};
+use axum::response::{IntoResponse, Response};
+use axum::{response::Html, routing::{get,post}, Json, Router};
 use bcrypt::{hash, verify, DEFAULT_COST};
 use chrono;
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
-use models::{Badge, Claims, FormatCourt, Metier, User, UserLogin};
-use quick_xml::{events::Event,reader::Reader};
-use serde_json::{json, to_string};
-use std::fs::{self, File, OpenOptions};
+use models::{AppState, Badge, Claims, Metier, Metiers, SearchQuery, User, UserLogin};
+use quick_xml::de::from_str;
+use serde_json::json;
+use std::fs::{ self, File, OpenOptions};
 use std::io::{self, BufReader, Read, Seek, Write};
+use std::sync::{Arc, RwLock};
 use tower_http::cors::{Any, CorsLayer};
 
 #[tokio::main]
 async fn main() {
+    
+    let file_metiers: Metiers = from_str(
+        &fs::read_to_string("Onisep_Ideo_Fiches_Metiers_09122024.xml").expect("Cannot read file")
+    ).expect("Cannot deserialize file jobs");
+
+    let state = AppState {
+        metiers: Arc::new(RwLock::new(file_metiers))
+    }
+
     let cors = CorsLayer::new()
         .allow_origin(Any)
         .allow_methods(Any)
@@ -28,7 +36,7 @@ async fn main() {
         .route("/api", get(handler).layer(from_fn(validate_token)))
         .route("/api/register", post(register_user))
         .route("/api/login", post(login_user))
-        .route("/api/jobs", get(jobs_handler))
+        .route("/api/jobs/search", get(jobssearch_handler))
         .layer(cors);
 
     // run it
@@ -39,40 +47,56 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
+
+type Result<T> = std::result::Result<T, AppError>;
+
+// Make our own error that wraps `anyhow::Error`.
+struct AppError(anyhow::Error);
+
+// Tell axum how to convert `AppError` into a response.
+impl IntoResponse for AppError {
+    fn into_response(self) -> Response {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("Something went wrong: {}", self.0),
+        )
+            .into_response()
+    }
+}
+
+// This enables using `?` on functions that return `Result<_, anyhow::Error>` to turn them into
+// `Result<_, AppError>`. That way you don't need to do that manually.
+impl<E> From<E> for AppError
+where
+    E: Into<anyhow::Error>,
+{
+    fn from(err: E) -> Self {
+        Self(err.into())
+    }
+}
+
+
 async fn validate_token(
     req: Request,
     next: Next,
-) -> Result<Response, (StatusCode, Json<serde_json::Value>)> {
+) -> Result<Response> {
     let auth_header = req.headers().get("Authorization");
-
     if let Some(auth_header) = auth_header {
         let token = auth_header.to_str().unwrap().replace("Bearer ", "");
         let validation = Validation::default();
-        match decode::<Claims>(
+        let _decode=  decode::<Claims>(
             &token,
             &DecodingKey::from_secret("secret".as_ref()),
             &validation,
-        ) {
-            Ok(_) => return Ok(next.run(req).await),
-            Err(_) => {
-                return Err((
-                    StatusCode::UNAUTHORIZED,
-                    Json(json!({"error": "Invalid token"})),
-                ))
-            }
-        }
+        )?;
+       
     }
-    Err((
-        StatusCode::UNAUTHORIZED,
-        Json(json!({"error": "Missing token"})),
-    ))
+    Ok(next.run(req).await)
 }
 
-async fn register_user(Json(payload): Json<User>) -> Json<serde_json::Value> {
-    match add_user(payload) {
-        Ok(_) => Json(json!({"message": "User registered successfully"})),
-        Err(e) => Json(json!({"error": format!("{}", e)})),
-    }
+async fn register_user(Json(payload): Json<User>) -> Result<Json<serde_json::Value>> {
+    let _ = add_user(payload)?;
+    Ok(Json(json!({"message": "User registered successfully"})))
 }
 
 async fn login_user(Json(payload): Json<UserLogin>) -> Json<serde_json::Value> {
@@ -81,7 +105,7 @@ async fn login_user(Json(payload): Json<UserLogin>) -> Json<serde_json::Value> {
         Ok(true) => {
             let mut user = match load_user(&payload.username) {
                 Ok(user) => user,
-                Err(e) => return Json(json!({"error": format!("{}", e)})),
+                Err(e) => return Json(json!({})),
             };
             println!("Add experience");
             // Add experience
@@ -89,20 +113,20 @@ async fn login_user(Json(payload): Json<UserLogin>) -> Json<serde_json::Value> {
             println!("Upload user");
             // Save the updated user
             if let Err(e) = save_user(&user) {
-                return Json(json!({"error": format!("{}", e)}));
+                return Json(json!({}));
             }
             println!("Create Token ");
             match create_jwt(&payload.username) {
                 Ok(token) => Json(json!({"token": token})),
-                Err(e) => Json(json!({"error true": format!("{}", e)})),
+                Err(_) => Json(json!({})),
             }
         }
         Ok(false) => Json(json!({"error": "Invalid credentials"})),
-        Err(e) => Json(json!({"error false": format!("{}", e)})),
+        Err(_) => Json(json!({})),
     }
 }
 
-fn add_user(user: User) -> Result<(), Box<dyn std::error::Error>> {
+fn add_user(user: User) -> Result<()> {
     let file = OpenOptions::new()
         .read(true)
         .write(true)
@@ -141,7 +165,27 @@ fn add_user(user: User) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn verify_user(username: &str, password: &str) -> Result<bool, Box<dyn std::error::Error>> {
+async fn jobssearch_handler(
+    Query(search): Query<SearchQuery>,
+) -> Result<Json<Vec<Metier>>> {
+    let res = jobs(&search.search).await?;
+    Ok(Json(res))
+}
+
+async fn jobs(query: &str) -> Result<Vec<Metier>> {
+    let file = tokio::fs::read_to_string("Onisep_Ideo_Fiches_Metiers_09122024.xml").await?;
+    let res: Metiers = from_str(&file)?;
+    let mut items = vec![];
+    for metier in res.metiers {
+        if metier.nom_metier.contains(query) {
+            println!("{:?}", metier);
+            items.push(metier);
+        }
+    }
+    Ok(items)
+}
+
+fn verify_user(username: &str, password: &str) -> Result<bool> {
     let mut file = File::open("data.json")?;
     let mut contents = String::new();
     file.read_to_string(&mut contents)?;
@@ -156,7 +200,7 @@ fn verify_user(username: &str, password: &str) -> Result<bool, Box<dyn std::erro
     Ok(false)
 }
 
-fn create_jwt(username: &str) -> Result<String, Box<dyn std::error::Error>> {
+fn create_jwt(username: &str) -> Result<String> {
     let expiration = chrono::Utc::now()
         .checked_add_signed(chrono::Duration::days(1))
         .expect("valid timestamp")
@@ -204,7 +248,7 @@ fn check_badges(user: &mut User) {
     }
 }
 
-fn save_user(user: &User) -> Result<(), Box<dyn std::error::Error>> {
+fn save_user(user: &User) -> Result<()> {
     let mut file = OpenOptions::new()
         .read(true)
         .write(true)
@@ -235,107 +279,21 @@ fn save_user(user: &User) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn load_user(username: &str) -> Result<User, Box<dyn std::error::Error>> {
+fn load_user(username: &str) -> Result<Json<User>> {
     let mut file = File::open("data.json")?;
     let mut contents = String::new();
     file.read_to_string(&mut contents)?;
-
+    let mut res_user: User ;
     let users: Vec<User> = serde_json::from_str(&contents)?;
     for user in users {
         if user.username == username {
-            return Ok(user);
+           res_user = user ;
         }
     }
+    Ok(Json(res_user))
+    
+    
 
-    Err("User not found".into())
-}
-
-async fn jobs_handler() -> Json<Vec<Metier>> {
-    let mut xml_reader = Reader::from_file("Onisep_Ideo_Fiches_Metiers_09122024.xml").expect("Cannot read the file");
-    xml_reader.config_mut().trim_text(true);
-
-    let mut buf = Vec::new();
-    let mut metiers = Vec::new();
-    let mut current_metier = None;
-    let mut current_format_court = None;
-    let mut current_text = String::new();
-
-    loop {
-        match xml_reader.read_event_into(&mut buf) {
-            
-            Err(e) => panic!(
-                "Error at position {:?}",e
-            ),
-            Ok(Event::Eof) => break,
-            Ok(Event::Start(ref e)) => {
-                match e.name().as_ref() {
-                    b"metier" => {
-                        current_metier = Some(Metier {
-                            nom_metier: String::new(),
-                            acces_metier: String::new(),
-                            competences: String::new(),
-                            condition_travail: String::new(),
-                            formats_courts: None,
-                        });
-                    }
-                    b"format_court" => {
-                        current_format_court = Some(FormatCourt {
-                            r#type: String::new(),
-                            libelle: String::new(),
-                            descriptif: String::new(),
-                        });
-                    }
-                    _ => {}
-                }
-            }
-            Ok(Event::End(ref e)) => {
-                match e.name().as_ref() {
-                    b"metier" => {
-                        if let Some(metier) = current_metier.take() {
-                            metiers.push(metier);
-                        }
-                    }
-                    b"format_court" => {
-                        if let Some(mut metier) = current_metier.as_mut() {
-                            if let Some(format_court) = current_format_court.take() {
-                                if metier.formats_courts.is_none() {
-                                    metier.formats_courts = Some(Vec::new());
-                                }
-                                metier.formats_courts.as_mut().unwrap().push(format_court);
-                            }
-                        }
-                    }
-                    _ => {}
-                }
-            }
-            Ok(Event::Text(e)) => {
-                if let Some(ref mut metier) = current_metier {
-                    match xml_reader.element_name() {
-                        b"nom_metier" => metier.nom_metier = e.unescape().unwrap().to_string(),
-                        b"acces_metier" => metier.acces_metier = e.unescape().unwrap().to_string(),
-                        b"competences" => metier.competences = e.unescape().unwrap().to_string(),
-                        b"condition_travail" => metier.condition_travail = e.unescape().unwrap().to_string(),
-                        _ => {}
-                    }
-                }
-                if let Some(ref mut format_court) = current_format_court {
-                    match xml_reader. {
-                        b"type" => format_court.r#type = e.unescape().unwrap().to_string(),
-                        b"libelle" => format_court.libelle = e.unescape().unwrap().to_string(),
-                        b"descriptif" => format_court.descriptif = e.unescape().unwrap().to_string(),
-                        _ => {}
-                    }
-                }
-            }
-
-            _ => {}
-        }
-        buf.clear();
-    }
-    for metier in &metiers {
-        println!("{:?}", metier);
-    }
-    Json(metiers)
 }
 
 async fn handler() -> Html<&'static str> {

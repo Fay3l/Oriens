@@ -1,4 +1,8 @@
+use std::sync::{Arc, RwLock};
+
 use serde::{Deserialize, Serialize};
+
+use crate::database::DB;
 
 
 #[derive(Serialize, Deserialize,Clone, Debug)]
@@ -29,17 +33,24 @@ pub struct Claims {
     pub sub: String,
     pub exp: usize,
 }
-#[derive(Serialize,Clone, Deserialize, Debug)]
-pub struct FormatCourt {
-    pub r#type: String,
-    pub libelle: String,
-    pub descriptif: String,
-}
-#[derive(Serialize,Clone, Deserialize, Debug)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Metier {
+    pub identifiant: String,
     pub nom_metier: String,
-    pub acces_metier: String,
-    pub competences: String,
-    pub condition_travail: String,
-    pub formats_courts: Option<Vec<FormatCourt>>,
+    pub acces_metier: String
+}
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Metiers {
+    #[serde(rename = "metier")]
+    pub metiers: Vec<Metier>,
+}
+
+#[derive(Deserialize,Debug,Serialize)]
+pub struct SearchQuery {
+    pub search: String,
+}
+
+pub struct AppState{
+    pub metiers : Arc<RwLock<Metiers>>,
+    pub db: DB
 }

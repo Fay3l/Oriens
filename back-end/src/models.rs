@@ -50,7 +50,8 @@ pub struct SearchQuery {
     pub search: String,
 }
 
+#[derive(Clone)]
 pub struct AppState{
     pub metiers : Arc<RwLock<Metiers>>,
-    pub db: DB
+    // pub db: DB
 }

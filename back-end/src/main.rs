@@ -6,7 +6,7 @@ use axum::{ Json, Router};
 use bcrypt::{hash, verify, DEFAULT_COST};
 use chrono;
 use jsonwebtoken::{encode, EncodingKey, Header};
-use models::{AppState, Badge, Claims, Metier, Metiers, User};
+use models::{AppState, Badge, Claims, Job, Jobs, User};
 use quick_xml::de::from_str;
 use std::fs::{ self, File, OpenOptions};
 use std::io::{self, BufReader, Read, Seek, Write};
@@ -16,7 +16,7 @@ use tower_http::cors::{Any, CorsLayer};
 #[tokio::main]
 async fn main() {
     
-    let file_metiers: Metiers = from_str(
+    let file_metiers: Jobs = from_str(
         &fs::read_to_string("Onisep_Ideo_Fiches_Metiers_09122024.xml").expect("Cannot read file")
     ).expect("Cannot deserialize file jobs");
 
@@ -89,9 +89,9 @@ pub fn add_user(user: User) -> api::Result<()> {
 
 
 
-pub async fn jobs(query: &str) -> api::Result<Vec<Metier>> {
+pub async fn jobs(query: &str) -> api::Result<Vec<Job>> {
     let file = tokio::fs::read_to_string("Onisep_Ideo_Fiches_Metiers_09122024.xml").await?;
-    let res: Metiers = from_str(&file)?;
+    let res: Jobs = from_str(&file)?;
     let mut items = vec![];
     for metier in res.metiers {
         if metier.nom_metier.contains(query) {

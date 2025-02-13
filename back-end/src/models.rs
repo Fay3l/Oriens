@@ -34,15 +34,15 @@ pub struct Claims {
     pub exp: usize,
 }
 #[derive(Debug, Deserialize, Serialize)]
-pub struct Metier {
+pub struct Job {
     pub identifiant: String,
     pub nom_metier: String,
     pub acces_metier: String
 }
 #[derive(Debug, Deserialize, Serialize)]
-pub struct Metiers {
+pub struct Jobs {
     #[serde(rename = "metier")]
-    pub metiers: Vec<Metier>,
+    pub metiers: Vec<Job>,
 }
 
 #[derive(Deserialize,Debug,Serialize)]
@@ -50,8 +50,25 @@ pub struct SearchQuery {
     pub search: String,
 }
 
+#[derive(Deserialize,Debug,Serialize)]
+pub struct Question{
+    pub question: String,
+    pub reponse: String,
+    pub options: Vec<String>,
+}
+
+#[derive(Deserialize,Debug,Serialize)]
+pub struct Section{
+    pub title: String,
+    pub questions: Vec<Question>,
+}
+
+pub struct Survey{
+    pub sections: Vec<Section>,
+}
+
 #[derive(Clone)]
 pub struct AppState{
-    pub metiers : Arc<RwLock<Metiers>>,
+    pub metiers : Arc<RwLock<Jobs>>,
     // pub db: DB
 }

@@ -1,7 +1,7 @@
 use axum::{extract::{Query, Request}, http::StatusCode, middleware::{from_fn, Next}, response::{Html, IntoResponse, Response}, routing::{get, post}, Json, Router};
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde_json::json;
-use crate::{add_experience, add_user, create_jwt, jobs, load_user, models::{AppState, Claims, Metier, SearchQuery, User, UserLogin}, save_user, verify_user};
+use crate::{add_experience, add_user, create_jwt, jobs, load_user, models::{AppState, Claims, Job, SearchQuery, User, UserLogin}, save_user, verify_user};
 
 pub fn api_routes()->Router<>{
     Router::new()
@@ -96,7 +96,7 @@ async fn register_user(Json(payload): Json<User>) -> Result<Json<serde_json::Val
 
 async fn jobssearch_handler(
     Query(search): Query<SearchQuery>,
-) -> Result<Json<Vec<Metier>>> {
+) -> Result<Json<Vec<Job>>> {
     let res = jobs(&search.search).await?;
     Ok(Json(res))
 }

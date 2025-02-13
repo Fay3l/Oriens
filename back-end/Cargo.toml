@@ -25,6 +25,9 @@ sqlx = { version = "0.8.3", features = [
     "time",
     "bigdecimal",
 ] }
+reqwest = {version="0.12.12",features = ["json"]}
+mistralai-client = "0.14.0"
+
 
 
 

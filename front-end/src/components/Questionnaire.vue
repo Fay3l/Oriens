@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import { Card, Button } from 'primevue';
+import { Card, Button, InputNumber } from 'primevue';
 import { questionnaire } from '../composables/questionnaire';
 import { ref } from 'vue';
 const currentSection = ref(0);
 const sections = [
-    questionnaire.value.section1,
-    questionnaire.value.section2,
-    questionnaire.value.section3,
-    questionnaire.value.section4,
-    questionnaire.value.section5,
-    questionnaire.value.section6,
-    questionnaire.value.section7
+    ...questionnaire.value.sections
 ];
 
 const responses = ref<{ [key: string]: string }>({});
@@ -41,11 +35,11 @@ const prevSection = () => {
                         <template #content>
                             <div v-if="question.options.length > 0" v-for="(option, idx) in question.options" :key="idx"
                                 class="m-1">
-                                <input type="radio" class="m-1" :name="'question' + index" :value="option" @change="(event:any) =>responses[question.question] = option" />
+                                <input type="radio" class="m-1"  :name="'question' + index" :value="option" @change="(event:any) =>question.response = option" />
                                 <label>{{ option }}</label>
                             </div>
                             <div v-else>
-                                <input type="text" :name="'question' + index" @input="(event:any) => { responses[question.question] = event.target.value }"  />
+                                <InputNumber size="small" type="text" :name="'question' + index" @input="(event:any) => { question.response = event.target.value }"  />
                             </div>
                         </template>
                     </Card>
@@ -55,7 +49,7 @@ const prevSection = () => {
         <div class="flex justify-center mt-3 gap-5">
             <Button v-if="currentSection > 0" @click="prevSection">Précédent</Button>
             <Button v-if="currentSection < sections.length - 1" @click="nextSection">Suivant</Button>
-            <Button v-if="currentSection >= sections.length - 1" @click="()=>{console.log(responses);}">Submit</Button>
+            <Button v-if="currentSection >= sections.length - 1" @click="()=>{console.log(questionnaire)}">Submit</Button>
         </div>
     </div>
 </template>

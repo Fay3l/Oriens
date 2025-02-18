@@ -1,19 +1,30 @@
-use axum::{extract::{Query, Request}, http::StatusCode, middleware::{from_fn, Next}, response::{Html, IntoResponse, Response}, routing::{get, post}, Json, Router};
+use crate::{
+    add_experience, add_user, create_jwt, jobs, load_user, models::{AppState, Claims, Job, MetiersPossibles, Question, Questionnaire, SearchQuery, Section, User, UserLogin}, save_user, survey_result, verify_user
+};
+use axum::{
+    extract::{Query, Request},
+    http::StatusCode,
+    middleware::{from_fn, Next},
+    response::{Html, IntoResponse, Response},
+    routing::{get, post},
+    Json, Router,
+};
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde_json::json;
-use crate::{add_experience, add_user, create_jwt, jobs, load_user, models::{AppState, Claims, Job, SearchQuery, User, UserLogin}, save_user, verify_user};
 
-pub fn api_routes()->Router<>{
+pub fn api_routes() -> Router {
     Router::new()
-    .route("/api", get(handler).layer(from_fn(validate_token)))
-    .route("/api/register", post(register_user))
-    .route("/api/login", post(login_user))
-    .route("/api/jobs/search", get(jobssearch_handler))
+        .route("/api", get(handler).layer(from_fn(validate_token)))
+        .route("/api/register", post(register_user))
+        .route("/api/login", post(login_user))
+        .route("/api/jobs/search", get(jobssearch_handler))
+        .route("/api/survey/result", post(survey_result_handler))
 }
 
 pub type Result<T> = std::result::Result<T, AppError>;
 
 // Make our own error that wraps `anyhow::Error`.
+#[derive(Debug)]
 pub struct AppError(pub anyhow::Error);
 
 // Tell axum how to convert `AppError` into a response.
@@ -38,29 +49,23 @@ where
     }
 }
 
-
-async fn validate_token(
-    req: Request,
-    next: Next,
-) -> Result<Response> {
+async fn validate_token(req: Request, next: Next) -> Result<Response> {
     let auth_header = req.headers().get("Authorization");
     if let Some(auth_header) = auth_header {
         let token = auth_header.to_str().unwrap().replace("Bearer ", "");
         let validation = Validation::default();
-        let _decode=  decode::<Claims>(
+        let _decode = decode::<Claims>(
             &token,
             &DecodingKey::from_secret("secret".as_ref()),
             &validation,
         )?;
-       
     }
     Ok(next.run(req).await)
 }
 
-
 async fn handler() -> Html<&'static str> {
     Html("<h1>Hello, World!</h1>")
-} 
+}
 
 async fn login_user(Json(payload): Json<UserLogin>) -> Json<serde_json::Value> {
     println!("{:?}", payload);
@@ -94,9 +99,12 @@ async fn register_user(Json(payload): Json<User>) -> Result<Json<serde_json::Val
     Ok(Json(json!({"message": "User registered successfully"})))
 }
 
-async fn jobssearch_handler(
-    Query(search): Query<SearchQuery>,
-) -> Result<Json<Vec<Job>>> {
+async fn jobssearch_handler(Query(search): Query<SearchQuery>) -> Result<Json<Vec<Job>>> {
     let res = jobs(&search.search).await?;
+    Ok(Json(res))
+}
+
+async fn survey_result_handler(Json(payload): Json<Vec<Section>>) -> Result<Json<MetiersPossibles>> {
+    let res = survey_result(payload).await?;
     Ok(Json(res))
 }

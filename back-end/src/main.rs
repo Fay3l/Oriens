@@ -6,7 +6,10 @@ use axum::{ Json, Router};
 use bcrypt::{hash, verify, DEFAULT_COST};
 use chrono;
 use jsonwebtoken::{encode, EncodingKey, Header};
-use models::{AppState, Badge, Claims, Job, Jobs, User};
+use mistralai_client::v1::chat::{ChatMessage, ChatMessageRole, ChatParams, ResponseFormat};
+use mistralai_client::v1::client::Client;
+use mistralai_client::v1::constants::Model;
+use models::{AppState, Badge, Claims, Job, Jobs, MetiersPossibles, Question, Questionnaire, Section, User};
 use quick_xml::de::from_str;
 use std::fs::{ self, File, OpenOptions};
 use std::io::{self, BufReader, Read, Seek, Write};
@@ -15,13 +18,17 @@ use tower_http::cors::{Any, CorsLayer};
 
 #[tokio::main]
 async fn main() {
-    
+    dotenv::dotenv().ok();
     let file_metiers: Jobs = from_str(
         &fs::read_to_string("Onisep_Ideo_Fiches_Metiers_09122024.xml").expect("Cannot read file")
     ).expect("Cannot deserialize file jobs");
-
+    let url_db = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let db = database::DB::connect(&url_db)
+        .await
+        .expect("Cannot connect to database");
     let state = AppState {
-        metiers: Arc::new(RwLock::new(file_metiers))
+        metiers: Arc::new(RwLock::new(file_metiers)),
+        db
     };
 
     let cors = CorsLayer::new()
@@ -41,12 +48,6 @@ async fn main() {
     println!("listening on {}", listener.local_addr().unwrap());
     axum::serve(listener, app).await.unwrap();
 }
-
-
-
-
-
-
 
 pub fn add_user(user: User) -> api::Result<()> {
     let file = OpenOptions::new()
@@ -73,7 +74,7 @@ pub fn add_user(user: User) -> api::Result<()> {
     };
 
     users.push(user_with_hashed_password);
-
+    
     // Sérialiser la liste mise à jour en JSON
     let users_json = serde_json::to_string_pretty(&users)?;
 
@@ -209,6 +210,31 @@ pub fn load_user(username: &str) -> api::Result<Json<User>> {
     }
 
     Err(AppError(anyhow::anyhow!("User not found")))
+}
+
+pub async fn survey_result( data: Vec<Section>) -> api::Result<MetiersPossibles> {
+    let api_key = std::env::var("API_MISTRAL_KEY").expect("API_MISTRAL_KEY must be set");
+    
+    let client = Client::new(Some(api_key.to_string()), None, None, None).unwrap();
+    let model = Model::OpenMistral7b;
+    println!("{:?}",api_key);
+    let messages = vec![ChatMessage {
+        role: ChatMessageRole::User,
+        content:format!("Pour la personne qui a répondu au questionnaire, trouver 2-3 métiers qui correspondent aux réponses. Retourner les métiers et les descriptions en objet JSON.{:?}",data) ,
+        tool_calls: None,
+
+    }];
+    let options = ChatParams {
+        temperature: 0.7,
+        random_seed: Some(42),
+        response_format: Option::from(ResponseFormat::json_object()),
+        ..Default::default()
+    };
+
+    let result = client.chat_async(model, messages, Some(options)).await.unwrap();
+    println!("Assistant: {}", result.choices[0].message.content);
+    let metiers_possibles: MetiersPossibles = serde_json::from_str(&result.choices[0].message.content).expect("JSON was not well-formatted");
+    Ok(metiers_possibles)
 }
 
 

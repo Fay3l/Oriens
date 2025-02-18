@@ -1,8 +1,10 @@
 use std::sync::{Arc, RwLock};
 
+use mistralai_client::v1::client::Client;
 use serde::{Deserialize, Serialize};
 
-use crate::database::DB;
+use crate::database;
+
 
 
 #[derive(Serialize, Deserialize,Clone, Debug)]
@@ -50,14 +52,14 @@ pub struct SearchQuery {
     pub search: String,
 }
 
-#[derive(Deserialize,Debug,Serialize)]
+#[derive(Debug,Deserialize,Clone,Serialize)]
 pub struct Question{
     pub question: String,
-    pub reponse: String,
+    pub response: String,
     pub options: Vec<String>,
 }
 
-#[derive(Deserialize,Debug,Serialize)]
+#[derive(Debug,Deserialize,Clone,Serialize)]
 pub struct Section{
     pub title: String,
     pub questions: Vec<Question>,
@@ -67,8 +69,25 @@ pub struct Survey{
     pub sections: Vec<Section>,
 }
 
-#[derive(Clone)]
+#[derive(Debug,Clone)]
 pub struct AppState{
     pub metiers : Arc<RwLock<Jobs>>,
-    // pub db: DB
+    pub db: database::DB
 }
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Questionnaire {
+    pub sections: Vec<Section>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Metier {
+    pub titre: String,
+    pub description: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct MetiersPossibles {
+    pub metiers_possibles: Vec<Metier>,
+}
+

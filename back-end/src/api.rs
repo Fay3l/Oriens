@@ -1,5 +1,10 @@
 use crate::{
-    add_experience, add_user, create_jwt, jobs, load_user, models::{AppState, Claims, Job, MetiersPossibles, Question, Questionnaire, SearchQuery, Section, User, UserLogin}, save_user, survey_result, verify_user
+    add_experience, add_user, create_jwt, jobs, load_user,
+    models::{
+        AppState, Claims, Job, MetiersPossibles, Question, Questionnaire, SearchQuery, Section,
+        User, UserLogin,
+    },
+    save_user, questionnaire_result, verify_user,
 };
 use axum::{
     extract::{Query, Request},
@@ -10,6 +15,7 @@ use axum::{
     Json, Router,
 };
 use jsonwebtoken::{decode, DecodingKey, Validation};
+use mistralai_client::v1::client::Client;
 use serde_json::json;
 
 pub fn api_routes() -> Router {
@@ -18,7 +24,7 @@ pub fn api_routes() -> Router {
         .route("/api/register", post(register_user))
         .route("/api/login", post(login_user))
         .route("/api/jobs/search", get(jobssearch_handler))
-        .route("/api/survey/result", post(survey_result_handler))
+        .route("/api/survey/result", post(survey_handler))
 }
 
 pub type Result<T> = std::result::Result<T, AppError>;
@@ -94,6 +100,13 @@ async fn login_user(Json(payload): Json<UserLogin>) -> Json<serde_json::Value> {
     }
 }
 
+async fn survey_handler(
+    Json(survey): Json<Vec<Section>>,
+) -> Result<Json<MetiersPossibles>> {
+    let res = questionnaire_result(survey).await?;
+    Ok(Json(res))
+}
+
 async fn register_user(Json(payload): Json<User>) -> Result<Json<serde_json::Value>> {
     let _ = add_user(payload)?;
     Ok(Json(json!({"message": "User registered successfully"})))
@@ -104,7 +117,4 @@ async fn jobssearch_handler(Query(search): Query<SearchQuery>) -> Result<Json<Ve
     Ok(Json(res))
 }
 
-async fn survey_result_handler(Json(payload): Json<Vec<Section>>) -> Result<Json<MetiersPossibles>> {
-    let res = survey_result(payload).await?;
-    Ok(Json(res))
-}
+

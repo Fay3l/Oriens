@@ -64,7 +64,7 @@ pub struct Section{
     pub title: String,
     pub questions: Vec<Question>,
 }
-
+#[derive(Debug,Clone)]
 pub struct Survey{
     pub sections: Vec<Section>,
 }
@@ -79,6 +79,8 @@ pub struct AppState{
 pub struct Questionnaire {
     pub sections: Vec<Section>,
 }
+
+
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Metier {

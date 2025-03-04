@@ -212,15 +212,14 @@ pub fn load_user(username: &str) -> api::Result<Json<User>> {
     Err(AppError(anyhow::anyhow!("User not found")))
 }
 
-pub async fn survey_result( data: Vec<Section>) -> api::Result<MetiersPossibles> {
+
+pub async fn mistral_chat(content:String)-> api::Result<mistralai_client::v1::chat::ChatResponse> {
     let api_key = std::env::var("API_MISTRAL_KEY").expect("API_MISTRAL_KEY must be set");
-    
     let client = Client::new(Some(api_key.to_string()), None, None, None).unwrap();
     let model = Model::OpenMistral7b;
-    println!("{:?}",api_key);
     let messages = vec![ChatMessage {
         role: ChatMessageRole::User,
-        content:format!("Pour la personne qui a répondu au questionnaire, trouver 2-3 métiers qui correspondent aux réponses. Retourner les métiers et les descriptions en objet JSON.{:?}",data) ,
+        content: content ,
         tool_calls: None,
 
     }];
@@ -230,11 +229,21 @@ pub async fn survey_result( data: Vec<Section>) -> api::Result<MetiersPossibles>
         response_format: Option::from(ResponseFormat::json_object()),
         ..Default::default()
     };
+    let result = client.chat_async(model, messages, Some(options)).await?;
+    Ok(result)
+}
 
-    let result = client.chat_async(model, messages, Some(options)).await.unwrap();
-    println!("Assistant: {}", result.choices[0].message.content);
+pub async fn questionnaire_result(data: Vec<Section>) -> api::Result<MetiersPossibles> {
+    let content = format!("Pour la personne qui a répondu au questionnaire, trouver 2-3 métiers qui correspondent aux réponses. Retourner les métiers et les descriptions en objet JSON.{:?}",data);
+    let result = mistral_chat(content).await?;
     let metiers_possibles: MetiersPossibles = serde_json::from_str(&result.choices[0].message.content).expect("JSON was not well-formatted");
     Ok(metiers_possibles)
+    
+    
+    
+    
+    
+    
 }
 
 

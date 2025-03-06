@@ -250,10 +250,32 @@ fn main() {
     }
 ]"#;
     let data_modified = data.replace("\n", " ").replace("\r", "");
+    let object_json = r#"
+    {
+    "metiers_possibles": [
+        {
+        "title": "",
+        "description": ""
+        },
+        {
+        "title": "",
+        "description": ""
+        },
+        {
+        "title": "",
+        "description": ""
+        },
+        {
+        "title": "",
+        "description": ""
+        }
+    ]
+    }
+    "#;
     let model = Model::OpenMistral7b;
     let messages = vec![ChatMessage {
         role: ChatMessageRole::User,
-        content:format!("Pour la personne qui a répondu au questionnaire, trouver 3-4 métiers qui correspondent aux réponses. Retourner les métiers et les descriptions en objet JSON.{:?}",data.to_string()) ,
+        content:format!("Pour la personne qui a répondu au questionnaire, trouver 3-4 métiers qui correspondent aux réponses. Retourner les métiers et les descriptions en objet JSON.Doit retourner {:?}. {:?}",object_json,data.to_string()) ,
         tool_calls: None,
 
     }];

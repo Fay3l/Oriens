@@ -213,7 +213,7 @@ pub fn load_user(username: &str) -> api::Result<Json<User>> {
 }
 
 
-pub async fn mistral_chat(content:String)-> api::Result<mistralai_client::v1::chat::ChatResponse> {
+pub fn mistral_chat(content:String)-> api::Result<mistralai_client::v1::chat::ChatResponse> {
     let api_key = std::env::var("API_MISTRAL_KEY").expect("API_MISTRAL_KEY must be set");
     let client = Client::new(Some(api_key.to_string()), None, None, None).unwrap();
     let model = Model::OpenMistral7b;
@@ -229,21 +229,38 @@ pub async fn mistral_chat(content:String)-> api::Result<mistralai_client::v1::ch
         response_format: Option::from(ResponseFormat::json_object()),
         ..Default::default()
     };
-    let result = client.chat_async(model, messages, Some(options)).await?;
+    let result = client.chat(model, messages, Some(options))?;
     Ok(result)
 }
 
 pub async fn questionnaire_result(data: Vec<Section>) -> api::Result<MetiersPossibles> {
-    let content = format!("Pour la personne qui a répondu au questionnaire, trouver 2-3 métiers qui correspondent aux réponses. Retourner les métiers et les descriptions en objet JSON.{:?}",data);
-    let result = mistral_chat(content).await?;
+    let object_json = r#"
+    {
+    "metiers_possibles": [
+        {
+        "nom_metier": "",
+        "description": ""
+        },
+        {
+        "nom_metier": "",
+        "description": ""
+        },
+        {
+        "nom_metier": "",
+        "description": ""
+        },
+        {
+        "nom_metier": "",
+        "description": ""
+        }
+    ]
+    }
+    "#;
+    let content = format!("Pour la personne qui a répondu au questionnaire, trouver 2-3 métiers qui correspondent aux réponses. Retourner les métiers et les descriptions en objet JSON. Doit retourner {:?}. {:?}",object_json,data);
+    let result = tokio::task::spawn_blocking(||{mistral_chat(content)}).await??;
     let metiers_possibles: MetiersPossibles = serde_json::from_str(&result.choices[0].message.content).expect("JSON was not well-formatted");
     Ok(metiers_possibles)
-    
-    
-    
-    
-    
-    
+
 }
 
 

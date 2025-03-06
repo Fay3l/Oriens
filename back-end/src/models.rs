@@ -84,7 +84,7 @@ pub struct Questionnaire {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Metier {
-    pub titre: String,
+    pub nom_metier: String,
     pub description: String,
 }
 

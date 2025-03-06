@@ -60,3 +60,36 @@ const questionnaireData = new Questionnaire([
 ]);
 
 export const questionnaire = ref(questionnaireData);
+
+export const data_jobs = ref([
+  {
+      categorie:'Ouvrier',
+      titre:'Lorem ipsum dolor sit amet lorem',
+      description:'Lorem ipsum dolor dit amet'
+  },
+  {
+      categorie:'Ouvrier',
+      titre:'Lorem ipsum dolor sit amet lorem',
+      description:'Lorem ipsum dolor dit amet'
+  },
+  {
+      categorie:'Ouvrier',
+      titre:'Lorem ipsum dolor sit amet lorem',
+      description:'Lorem ipsum dolor dit amet'
+  },
+  {
+      categorie:'Ouvrier',
+      titre:'Lorem ipsum dolor sit amet lorem',
+      description:'Lorem ipsum dolor dit amet'
+  },
+  {
+      categorie:'Ouvrier',
+      titre:'Lorem ipsum dolor sit amet lorem',
+      description:'Lorem ipsum dolor dit amet'
+  },
+  {
+      categorie:'Ouvrier',
+      titre:'Lorem ipsum dolor sit amet lorem',
+      description:'Lorem ipsum dolor dit amet'
+  },
+])

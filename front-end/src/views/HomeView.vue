@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import HeaderHomeView from '@/components/HeaderHomeView.vue';
-import CardJob from '@/components/CardJob.vue';
+import GroupCardJob from '@/components/GroupCardJob.vue';
 </script>
 
 
@@ -12,9 +12,7 @@ import CardJob from '@/components/CardJob.vue';
     <p class="font-bold text-blue">ACCOMPAGNEMENT PERSONNALISÉ POUR</p>
     <p class="font-bold text-blue">LES JEUNES DE 12 À 18 ANS</p>
   </div>
-  <div class="flex justify-center m-10">
-    <CardJob></CardJob>
-  </div>
+  <GroupCardJob></GroupCardJob>
 </template>
 
 

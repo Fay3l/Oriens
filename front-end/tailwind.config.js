@@ -9,6 +9,7 @@ export default {
       fontFamily:{
         raleway: ['Raleway', 'sans-serif'],
         'rock-salt': ['Rock Salt', 'cursive'],
+        roboto: ['Roboto', 'sans-serif'],
       },
       colors:{
         orange:'#EE7213',

@@ -8,7 +8,7 @@ const value = ref('');
 
 <template>
     <header class=" lg:flex flex-wrap sm:  flex flex-row justify-around items-center">
-        <img  src="./../images/logo_blue.svg" class="m-2 lg:w-48 h-12 sm: w-full h-5">
+        <img  src="./../images/logo_blue.svg" class="m-2 lg:w-48 h-12 sm: w-full h-18">
         <div class="flex gap-6 lg:text-base sm:text-xs">
             <p>Métiers</p>
             <p>Formations</p>
@@ -20,7 +20,7 @@ const value = ref('');
             <p>Découvrir</p>
         </div>
     </header>
-    <div class="bg-blue flex flex-row justify-around rounded-b-3xl  gap-5 sm:flex flex-row gap-1 rounded-b-none ">
+    <div class="bg-blue flex flex-row justify-around rounded-b-5xl  gap-5  sm:flex flex-row gap-1 rounded-b-none ">
         <div class="flex items-center sm:flex m-1 text-sm"> 
             <div class="flex flex-col gap-4">
                 <div class="text-white font-bold flex flex-col gap-1 lg:text-5xl sm:text-xs">

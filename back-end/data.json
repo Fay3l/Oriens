@@ -1,28 +1,16 @@
 [
   {
-    "username": "Fay3l",
-    "name": "Fayel",
-    "surname": "Mohamed",
-    "address": "10 rue avenue Jean Vilar",
-    "age": 16,
-    "password": "$2b$12$/GqwDaZi6LVjXdZAVIs0b.TuzKDex9x9YutaiOsDt47Y0aIPx411e",
-    "experience": 120,
-    "badges": [
-      "Novice",
-      "Intermediate",
-      "Expert"
-    ]
-  },
-  {
-    "username": "user1",
-    "name": "Fayel",
-    "surname": "Mohamed",
-    "address": "8 rue avenue Jean Vilar",
-    "age": 17,
-    "password": "$2b$12$A.Vw/hT7ZMR4r6Hed3kItecrGWZrBr30oKe57QmWS27esi9SaLYo.",
-    "experience": 10,
-    "badges": [
-      "Novice"
-    ]
+    "username": "Fay3l2",
+    "firstname": "Fayel",
+    "lastname": "Mohamed",
+    "address": "29 rue de bonn",
+    "email": "mohamed.fayel@yahoo.com",
+    "city": "IFS",
+    "postalcode": 14123,
+    "number_phone": 668235546,
+    "age": 12,
+    "password": "$2b$12$WADtNlFCotmxPKs/3w.NCOALRIJUikJZhx4Mey29R9nvWLJlhfigO",
+    "experience": 0,
+    "badges": []
   }
 ]

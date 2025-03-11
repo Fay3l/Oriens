@@ -10,9 +10,13 @@ use crate::database;
 #[derive(Serialize, Deserialize,Clone, Debug)]
 pub struct User {
     pub username: String,
-    pub name: String,
-    pub surname: String,
+    pub firstname: String,
+    pub lastname: String,
     pub address: String,
+    pub email: String,
+    pub city:String,
+    pub postalcode:u32,
+    pub number_phone:u32,
     pub age: u32,
     pub password: String,
     pub experience: u32,

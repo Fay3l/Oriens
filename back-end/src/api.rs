@@ -15,7 +15,6 @@ use axum::{
     Json, Router,
 };
 use jsonwebtoken::{decode, DecodingKey, Validation};
-use mistralai_client::v1::client::Client;
 use serde_json::json;
 
 pub fn api_routes() -> Router {

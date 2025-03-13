@@ -1,8 +1,5 @@
 use std::sync::{Arc, RwLock};
-
-use mistralai_client::v1::client::Client;
 use serde::{Deserialize, Serialize};
-
 use crate::database;
 
 
@@ -16,8 +13,8 @@ pub struct User {
     pub email: String,
     pub city:String,
     pub postalcode:u32,
-    pub number_phone:u32,
-    pub age: u32,
+    pub number_phone:String,
+    pub age: u8,
     pub password: String,
     pub experience: u32,
     pub badges: Vec<String>,

@@ -10,9 +10,12 @@ export default {
         raleway: ['Raleway', 'sans-serif'],
         'rock-salt': ['Rock Salt', 'cursive'],
         roboto: ['Roboto', 'sans-serif'],
+        jakarta: ['Plus Jakarta Sans', 'sans-serif'],
+        shadows: ['Shadows Into Light Two', 'cursive'],
       },
       colors:{
         orange:'#EE7213',
+        orangelight:'#FFA500',
         orangedark:'#E16200',
         bluedark:'#15285C',
         blue:'#2F4B98',

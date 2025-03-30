@@ -79,99 +79,103 @@ const onFormSubmit = (e: any) => {
 </script>
 
 <template>
-    <div class=" ">
-        <div>
-            <img src="../images/logo.svg" alt="logo" class="w-70 h-20">
-        </div>
-        <div >
-            <Form v-slot="$form" :initialValues :resolver @submit="onFormSubmit"
-                class="grid grid-cols-2 gap-4">
-                <div class="flex flex-col  gap-1">
-                    <IftaLabel>
-                        <label for="firstname" class="font-bold">Prénom</label>
-                        <InputText v-model="initialValues.firstname" name="firstname" type="text" placeholder="Prénom"
-                            fluid />
-                    </IftaLabel>
-                    <Message v-if="$form.firstname?.invalid" severity="error" size="small" variant="simple">{{
-                        $form.firstname.error.message }}</Message>
-                </div>
-                <div class="flex flex-col gap-1">
-                    <IftaLabel>
-                        <label for="lastname" class="font-bold">Nom de famille</label>
-                        <InputText v-model="initialValues.lastname" name="lastname" type="text"
-                            placeholder="Nom de famille" fluid />
-                    </IftaLabel>
-                    <Message v-if="$form.lastname?.invalid" severity="error" size="small" variant="simple">{{
-                        $form.lastname.error.message }}</Message>
-                </div>
-                <div class="flex flex-col gap-1">
-                    <IftaLabel>
-                        <label for="username" class="font-bold" >Username</label>
-                        <InputText v-model="initialValues.username" name="username" type="text" placeholder="Username"
-                        fluid />
-                    </IftaLabel>
-                    <Message v-if="$form.username?.invalid" severity="error" size="small" variant="simple">{{
-                        $form.username.error.message }}</Message>
-                </div>
-                <div class="flex flex-col gap-1">
-                    <IftaLabel>
-                        <label for="age" class="font-bold">Age</label>
-                        <InputNumber v-model="initialValues.age" inputId="age" :maxFractionDigits="3" fluid />
-                    </IftaLabel>                    
-                </div>
-                <div class="flex flex-col gap-1">
-                    <IftaLabel>
-                        <label for="email" class="font-bold">Email</label>
-                        <InputText v-model="initialValues.email" name="email" type="email" placeholder="Email" fluid />
-                    </IftaLabel>
-                    <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
-                        $form.email.error.message }}</Message>
-                </div>
-                <div class="flex flex-col gap-1">
-                    <IftaLabel>
-                        <label for="address" class="font-bold">Adresse</label>
-                        <InputText v-model="initialValues.address" name="address" type="text" placeholder="Adresse"
-                            fluid />
-                    </IftaLabel>
-                    <Message v-if="$form.firstname?.invalid" severity="error" size="small" variant="simple">{{
-                        $form.firstname.error.message }}</Message>
-                </div>
-                <div class="flex flex-col gap-1">
-                    <IftaLabel>
-                        <label for="postalcode" class="font-bold"> Code postal</label>
-                        <InputNumber v-model="initialValues.postalcode" inputId="postalcode" :maxFractionDigits="5"
-                            fluid />
-                    </IftaLabel>
+    <div class="flex">
+        <div class="flex flex-col justify-center">
+            <div>
+                <img src="../images/logo.svg" alt="logo" class="w-70 h-20">
+            </div>
+            <div>
+                <Form v-slot="$form" :initialValues :resolver @submit="onFormSubmit" class="grid grid-cols-2 gap-5">
+                    <div class="flex flex-col  gap-1">
+                        <IftaLabel>
+                            <label for="firstname" class="font-bold">Prénom</label>
+                            <InputText v-model="initialValues.firstname" name="firstname" type="text"
+                                placeholder="Prénom" fluid />
+                        </IftaLabel>
+                        <Message v-if="$form.firstname?.invalid" severity="error" size="small" variant="simple">{{
+                            $form.firstname.error.message }}</Message>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <IftaLabel>
+                            <label for="lastname" class="font-bold">Nom de famille</label>
+                            <InputText v-model="initialValues.lastname" name="lastname" type="text"
+                                placeholder="Nom de famille" fluid />
+                        </IftaLabel>
+                        <Message v-if="$form.lastname?.invalid" severity="error" size="small" variant="simple">{{
+                            $form.lastname.error.message }}</Message>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <IftaLabel>
+                            <label for="username" class="font-bold">Username</label>
+                            <InputText v-model="initialValues.username" name="username" type="text"
+                                placeholder="Username" fluid />
+                        </IftaLabel>
+                        <Message v-if="$form.username?.invalid" severity="error" size="small" variant="simple">{{
+                            $form.username.error.message }}</Message>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <IftaLabel>
+                            <label for="age" class="font-bold">Age</label>
+                            <InputNumber v-model="initialValues.age" inputId="age" :maxFractionDigits="3" fluid />
+                        </IftaLabel>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <IftaLabel>
+                            <label for="email" class="font-bold">Email</label>
+                            <InputText v-model="initialValues.email" name="email" type="email" placeholder="Email"
+                                fluid />
+                        </IftaLabel>
+                        <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
+                            $form.email.error.message }}</Message>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <IftaLabel>
+                            <label for="address" class="font-bold">Adresse</label>
+                            <InputText v-model="initialValues.address" name="address" type="text" placeholder="Adresse"
+                                fluid />
+                        </IftaLabel>
+                        <Message v-if="$form.firstname?.invalid" severity="error" size="small" variant="simple">{{
+                            $form.firstname.error.message }}</Message>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <IftaLabel>
+                            <label for="postalcode" class="font-bold"> Code postal</label>
+                            <InputNumber v-model="initialValues.postalcode" inputId="postalcode" :maxFractionDigits="5"
+                                fluid />
+                        </IftaLabel>
 
-                </div>
-                <div class="flex flex-col gap-1">
-                    <IftaLabel>
-                        <label for="city" class="font-bold">Ville</label>
-                        <InputText v-model="initialValues.city" name="city" type="text" placeholder="Ville" fluid />
-                    </IftaLabel>
-                    <Message v-if="$form.city?.invalid" severity="error" size="small" variant="simple">{{
-                        $form.city.error.message }}</Message>
-                </div>
-                <div class="flex flex-col gap-1">
-                    <IftaLabel>
-                        <label for="phone" class="font-bold">Phone</label>
-                        <InputMask id="phone" v-model="initialValues.number_phone" mask="(999) 999-9999"
-                            placeholder="(999) 999-9999" fluid />
-                    </IftaLabel>
-                </div>
-                <div class="flex flex-col gap-1">
-                    <IftaLabel>
-                        <label for="password" class="font-bold">Mot de passe</label>
-                    </IftaLabel>
-                    <Password v-model="initialValues.password" name="password" placeholder="Mot de passe"
-                        :feedback="false" toggleMask fluid />
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <IftaLabel>
+                            <label for="city" class="font-bold">Ville</label>
+                            <InputText v-model="initialValues.city" name="city" type="text" placeholder="Ville" fluid />
+                        </IftaLabel>
+                        <Message v-if="$form.city?.invalid" severity="error" size="small" variant="simple">{{
+                            $form.city.error.message }}</Message>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <IftaLabel>
+                            <label for="phone" class="font-bold">Phone</label>
+                            <InputMask id="phone" v-model="initialValues.number_phone" mask="(999) 999-9999"
+                                placeholder="(999) 999-9999" fluid />
+                        </IftaLabel>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <IftaLabel>
+                            <label for="password" class="font-bold">Mot de passe</label>
+                        </IftaLabel>
+                        <Password v-model="initialValues.password" name="password" placeholder="Mot de passe"
+                            :feedback="false" toggleMask fluid />
                         <Message v-if="$form.password?.invalid" severity="error" size="small" variant="simple">{{
-                        $form.password.error.message }}</Message>
-                </div>
-                <Button type="submit" severity="secondary" label="Confirmer" />
-            </Form>
+                            $form.password.error.message }}</Message>
+                    </div>
+                    <Button type="submit" severity="secondary" label="Confirmer" />
+                </Form>
+            </div>
         </div>
-
+        <div>
+            <img src="../images/image_pack2.png" alt="">
+        </div>
     </div>
 </template>
 

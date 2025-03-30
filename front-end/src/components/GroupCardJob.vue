@@ -4,7 +4,7 @@ import CardJob from './CardJob.vue';
 
 <template>
     <div cl>
-        <div v-for="index in 4" :key="index">
+        <div v-for="index in 2" :key="index">
             <div>
                 <CardJob />
             </div>

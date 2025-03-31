@@ -3,6 +3,7 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import IftaLabel from 'primevue/iftalabel';
 import { ref } from 'vue';
+import OriensButton from './button/OriensButton.vue';
 const value = ref('');
 </script>
 
@@ -43,14 +44,14 @@ const value = ref('');
                         <p>Vehicula massa in enim luctus. Rutrum arcu.</p>
                     </div>
                     <div >
-                        <Button class="bg-orangelight border-none text-orange p-20 "  >FAIRE MON TEST D'ORIENTATION</Button>
+                        <OriensButton label="FAIRE MON TEST D'ORIENTATION"></OriensButton>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class=" flex items-end">
-            <img alt="" class="mt-5 w-full  " src="./../images/student1.svg">
+            <img alt="" class="mt-5 w-full  " src="./../images/Image.svg">
         </div>
     </div>
 </template>

@@ -9,11 +9,11 @@ import GroupCardJob from '@/components/GroupCardJob.vue';
   <header>
     <HeaderHomeView></HeaderHomeView>
   </header>
-  <img alt="" src="../images/ecoles.png">
-  <div class="flex flex-col items-center justify-center mt-20 sm: flex flex-row items-center justify-center ">
-    <p class="font-rock-salt text-orange">Découvrez Oriens</p>
-    <p class="font-bold text-blue">ACCOMPAGNEMENT PERSONNALISÉ POUR</p>
-    <p class="font-bold text-blue">LES JEUNES DE 12 À 18 ANS</p>
+  <img alt="" class="lg:mt-10" src="../images/ecoles.png">
+  <div class="flex flex-col items-center font-bold justify-center mt-20 lg:text-xl sm: flex flex-row items-center justify-center ">
+    <p class="text-orange font-shadows lg:text-2xl">Découvrez Oriens</p>
+    <p class="">ACCOMPAGNEMENT PERSONNALISÉ POUR</p>
+    <p class="">LES JEUNES DE 12 À 18 ANS</p>
   </div>
   <div>
     <GroupCardJob></GroupCardJob>

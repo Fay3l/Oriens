@@ -25,6 +25,7 @@ export default defineConfig({
         timeout:2000,
         proxyTimeout:2000,
       }
-    }
+    },
+    allowedHosts: ['fay.tail8c4493.ts.net'],
   }
 })

@@ -15,16 +15,15 @@ const value = ref('');
             <p>Formations</p>
             <p>Nos services</p>
         </div>
-        <div class="flex gap-6 font-bold lg:text-base sm:text-xs">
+        <div class="flex gap-6 flex-row items-center lg:text-base sm:text-xs">
             <p>Se connecter</p>
-            <p>Contact</p>
-            <p>Découvrir</p>
+            <OriensButton size="small" label="Quiz d'orientation"></OriensButton>
         </div>
     </header>
-    <div class="flex flex-row justify-around rounded-b-5xl  gap-5  sm:flex flex-row gap-1 rounded-b-none ">
-        <div class="flex items-center sm:flex m-1 text-sm"> 
-            <div class="flex flex-col gap-4">
-                <div class=" font-bold flex flex-col gap-1 lg:text-5xl sm:text-xs">
+    <div class="flex flex-row justify-around rounded-b-5xl gap-5 xs:flex-col gap-6 rounded-b-none ">
+        <div class="flex flex-col items-center lg:text-7xl gap-3 sm:text-4xl gap-3 xs:text-lg"> 
+            <div class="flex flex-col gap-6">
+                <div class=" font-bold flex flex-col gap-5 ">
                     <p class="font-jakarta">Un accompagnement</p>
                     <div class="flex flex-row items-center gap-2">
                         <p class="text-orange font-shadows ">personnalisé</p>
@@ -43,7 +42,7 @@ const value = ref('');
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p> 
                         <p>Vehicula massa in enim luctus. Rutrum arcu.</p>
                     </div>
-                    <div >
+                    <div class="text-base" >
                         <OriensButton label="FAIRE MON TEST D'ORIENTATION"></OriensButton>
                     </div>
                 </div>
@@ -51,7 +50,7 @@ const value = ref('');
         </div>
 
         <div class=" flex items-end">
-            <img alt="" class="mt-5 w-full  " src="./../images/Image.svg">
+            <img alt="" class="mt-5 w-full hidden sm:inline" src="./../images/Image.svg">
         </div>
     </div>
 </template>

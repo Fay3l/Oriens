@@ -2,7 +2,16 @@ use std::sync::{Arc, RwLock};
 use serde::{Deserialize, Serialize};
 use crate::database;
 
-
+#[derive(Serialize, Deserialize,Clone, Debug)]
+pub struct GoogleAuth {
+    pub client_id: String,
+    pub project_id: String,
+    pub auth_uri: String,
+    pub token_uri: String,
+    pub auth_provider_x509_cert_url: String,
+    pub client_secret:String,
+    pub redirect_uris:Vec<String>,
+}
 
 #[derive(Serialize, Deserialize,Clone, Debug)]
 pub struct User {
@@ -73,7 +82,8 @@ pub struct Survey{
 #[derive(Debug,Clone)]
 pub struct AppState{
     pub metiers : Arc<RwLock<Jobs>>,
-    pub db: database::DB
+    pub db: database::DB,
+    pub google_auth: Arc<RwLock<GoogleAuth>>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -81,7 +91,13 @@ pub struct Questionnaire {
     pub sections: Vec<Section>,
 }
 
-
+#[derive(Deserialize, Debug,Serialize,Clone)]
+pub struct OAuthCallback {
+    pub code: String,
+    pub scope: String,
+    pub authuser: String,
+    pub prompt: String,
+}
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Metier {

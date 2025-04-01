@@ -9,7 +9,7 @@ use jsonwebtoken::{encode, EncodingKey, Header};
 use mistralai_client::v1::chat::{ChatMessage, ChatMessageRole, ChatParams, ResponseFormat};
 use mistralai_client::v1::client::Client;
 use mistralai_client::v1::constants::Model;
-use models::{AppState, Badge, Claims, Job, Jobs, MetiersPossibles, Question, Questionnaire, Section, User};
+use models::{AppState, Badge, Claims, GoogleAuth, Job, Jobs, MetiersPossibles, Question, Questionnaire, Section, User};
 use quick_xml::de::from_str;
 use std::fs::{ self, File, OpenOptions};
 use std::io::{self, BufReader, Read, Seek, Write};
@@ -22,13 +22,18 @@ async fn main() {
     let file_metiers: Jobs = from_str(
         &fs::read_to_string("Onisep_Ideo_Fiches_Metiers_09122024.xml").expect("Cannot read file")
     ).expect("Cannot deserialize file jobs");
+    let google_auth: GoogleAuth = serde_json::from_str(
+        &fs::read_to_string("google.json").expect("Cannot read google.json"),
+    )
+    .expect("Cannot deserialize google.json");
     let url_db = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let db = database::DB::connect(&url_db)
         .await
         .expect("Cannot connect to database");
     let state = AppState {
         metiers: Arc::new(RwLock::new(file_metiers)),
-        db
+        db,
+        google_auth:Arc::new(RwLock::new(google_auth)),
     };
 
     let cors = CorsLayer::new()
@@ -39,10 +44,11 @@ async fn main() {
     let app =
         Router::new()
         .merge(api::api_routes())
-        .layer(cors);
+        .layer(cors)
+        .with_state(state);
 
     // run it
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000")
         .await
         .unwrap();
     println!("listening on {}", listener.local_addr().unwrap());

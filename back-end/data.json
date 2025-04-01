@@ -7,9 +7,23 @@
     "email": "mohamed.fayel@yahoo.com",
     "city": "IFS",
     "postalcode": 14123,
-    "number_phone": 668235546,
+    "number_phone": "668235546",
     "age": 12,
     "password": "$2b$12$WADtNlFCotmxPKs/3w.NCOALRIJUikJZhx4Mey29R9nvWLJlhfigO",
+    "experience": 0,
+    "badges": []
+  },
+  {
+    "username": "FayelMOHAMED",
+    "firstname": "Fayel",
+    "lastname": "MOHAMED",
+    "address": "Unknown",
+    "email": "fayel.mohamed1@gmail.com",
+    "city": "Unknown",
+    "postalcode": 0,
+    "number_phone": "0",
+    "age": 0,
+    "password": "$2b$12$crlTQxAaRM1YWjuTVNh2TOb4OCICoL/webxTP0/4TP6/0/eLEtVVO",
     "experience": 0,
     "badges": []
   }

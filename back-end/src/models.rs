@@ -74,10 +74,6 @@ pub struct Section{
     pub title: String,
     pub questions: Vec<Question>,
 }
-#[derive(Debug,Clone)]
-pub struct Survey{
-    pub sections: Vec<Section>,
-}
 
 #[derive(Debug,Clone)]
 pub struct AppState{

@@ -1,4 +1,4 @@
-use std::{fs::File, io::{Read, Write}, sync::{Arc, RwLock}};
+use std::{fmt::format, fs::File, io::{Read, Write}, sync::{Arc, RwLock}};
 
 use crate::{
     add_experience, add_user, create_jwt, jobs, load_user, models::{
@@ -56,19 +56,35 @@ where
     }
 }
 
-async fn validate_token(req: Request, next: Next) -> Result<Response> {
+async fn validate_token(
+    req: Request,
+    next: Next,
+) -> Result<Response> {
     let auth_header = req.headers().get("Authorization");
+
     if let Some(auth_header) = auth_header {
         let token = auth_header.to_str().unwrap().replace("Bearer ", "");
         let validation = Validation::default();
-        let _decode = decode::<Claims>(
+        match decode::<Claims>(
             &token,
             &DecodingKey::from_secret("secret".as_ref()),
             &validation,
-        )?;
+        ) {
+            Ok(_) => return Ok(next.run(req).await),
+            Err(_) => {
+                return Err(AppError(anyhow::anyhow!(json!({
+                    "status": StatusCode::UNAUTHORIZED.as_u16(),
+                    "error": "Invalid token"
+                }).to_string())))
+            }
+        }
     }
-    Ok(next.run(req).await)
+    Err(AppError(anyhow::anyhow!(json!({
+        "status": StatusCode::UNAUTHORIZED.as_u16(),
+        "error": "Missing token"
+    }).to_string()))) 
 }
+
 
 async fn handler() -> Html<&'static str> {
     Html("<h1>Hello, World!</h1>")
@@ -80,7 +96,7 @@ async fn login_user(Json(payload): Json<UserLogin>) -> Json<serde_json::Value> {
         Ok(true) => {
             let mut user = match load_user(&payload.username) {
                 Ok(user) => user,
-                Err(e) => return Json(json!({})),
+                Err(e) => return Json(json!({"message": format!("{:?}",e.0)  , "code":StatusCode::INTERNAL_SERVER_ERROR.as_u16()})),
             };
             println!("Add experience");
             // Add experience
@@ -88,16 +104,16 @@ async fn login_user(Json(payload): Json<UserLogin>) -> Json<serde_json::Value> {
             println!("Upload user");
             // Save the updated user
             if let Err(e) = save_user(&user) {
-                return Json(json!({}));
+                return Json(json!({"message": format!("{:?}",e.0)  , "code":StatusCode::INTERNAL_SERVER_ERROR.as_u16()}));
             }
             println!("Create Token ");
             match create_jwt(&payload.username) {
                 Ok(token) => Json(json!({"token": token})),
-                Err(_) => Json(json!({})),
+                Err(e) => Json(json!({"message": format!("{:?}",e.0)  , "code":StatusCode::INTERNAL_SERVER_ERROR.as_u16()})),
             }
         }
         Ok(false) => Json(json!({"error": "Invalid credentials"})),
-        Err(_) => Json(json!({})),
+        Err(e) => Json(json!({"message": format!("{:?}",e.0)  , "code":StatusCode::INTERNAL_SERVER_ERROR.as_u16()})),
     }
 }
 
@@ -128,7 +144,6 @@ async fn start_google_auth(State(state):State<AppState>) -> Redirect {
     Redirect::temporary(&auth_url)
 }
 
-#[axum::debug_handler]
 async fn handle_google_callback(
     Query(params): Query<OAuthCallback>,
     State(state): State<AppState>,

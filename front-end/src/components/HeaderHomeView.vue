@@ -20,8 +20,8 @@ const value = ref('');
             <OriensButton size="small" label="Quiz d'orientation"></OriensButton>
         </div>
     </header>
-    <div class="flex flex-row justify-around rounded-b-5xl gap-5 xs:flex-col gap-6 rounded-b-none ">
-        <div class="flex flex-col items-center lg:text-7xl gap-3 sm:text-4xl gap-3 xs:text-lg"> 
+    <div class="flex flex-row justify-around items-center rounded-b-5xl gap-10 m-3 xs:flex-col gap-6 rounded-b-none items-center m-5 ">
+        <div class="flex flex-col items-center lg:text-3xl gap-3 sm:text-2xl gap-3 xs:text-lg"> 
             <div class="flex flex-col gap-6">
                 <div class=" font-bold flex flex-col gap-5 ">
                     <p class="font-jakarta">Un accompagnement</p>
@@ -50,7 +50,7 @@ const value = ref('');
         </div>
 
         <div class=" flex items-end">
-            <img alt="" class="mt-5 w-full hidden sm:inline" src="./../images/Image.svg">
+            <img alt="" class="mt-5 w-full hidden sm:visible" src="./../images/Image.svg">
         </div>
     </div>
 </template>

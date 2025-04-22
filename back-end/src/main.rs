@@ -124,14 +124,14 @@ pub fn verify_user(username: &str, password: &str) -> api::Result<bool> {
     Ok(false)
 }
 
-pub fn create_jwt(username: &str) -> api::Result<String> {
+pub fn create_jwt(id: uuid::Uuid) -> api::Result<String> {
     let expiration = chrono::Utc::now()
         .checked_add_signed(chrono::Duration::days(1))
         .expect("valid timestamp")
         .timestamp();
 
     let claims = Claims {
-        sub: username.to_owned(),
+        sub: id.to_owned().to_string(),
         exp: expiration as usize,
     };
 

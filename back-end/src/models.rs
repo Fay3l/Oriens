@@ -29,6 +29,29 @@ pub struct User {
     pub badges: Vec<String>,
 }
 
+#[derive(Serialize,Deserialize,Clone, Debug)]
+pub struct GetUser {
+
+    pub id: uuid::Uuid,
+    pub username: String,
+    pub firstname: String,
+    pub lastname: String,
+    pub address: Option<String>,
+    pub email: String,
+    pub city:Option<String>,
+    pub postalcode:Option<i32>,
+    pub number_phone:Option<String>,
+    pub age: i32,
+    pub password: String,
+    pub experience: i32,
+    pub badges: serde_json::Value,
+}
+
+#[derive(Serialize,Deserialize,Clone, Debug)]
+pub struct GetUserId {
+    pub id: uuid::Uuid,
+}
+
 #[derive(Serialize, Clone,  Deserialize, Debug)]
 pub struct UserLogin {
     pub username: String,

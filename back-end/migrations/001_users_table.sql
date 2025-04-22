@@ -1,6 +1,5 @@
 CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(255) NOT NULL UNIQUE,
+    id UUID PRIMARY KEY NOT NULL,
     firstname VARCHAR(255) NOT NULL,
     lastname VARCHAR(255) NOT NULL,
     address VARCHAR(255),
@@ -8,8 +7,8 @@ CREATE TABLE IF NOT EXISTS users (
     city VARCHAR(255),
     postalcode INTEGER,
     number_phone VARCHAR(15),
-    age INTEGER,
+    age INTEGER NOT NULL,
     password VARCHAR(255) NOT NULL,
-    experience INTEGER DEFAULT 0,
-    badges JSONB DEFAULT '[]'
+    experience INTEGER DEFAULT 0 NOT NULL,
+    badges JSONB DEFAULT '[]' NOT NULL
 );

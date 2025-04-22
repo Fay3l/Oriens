@@ -1,9 +1,10 @@
+
 use std::{fmt::format, fs::File, io::{Read, Write}, sync::{Arc, RwLock}};
 
 use crate::{
     add_experience, add_user, create_jwt, jobs, load_user, models::{
         AppState, Claims, GoogleAuth, Job, MetiersPossibles, OAuthCallback, Question, Questionnaire, SearchQuery, Section, User, UserLogin
-    }, questionnaire_result, save_user, verify_user
+    }, questionnaire_result, save_user, verify_user,database
 };
 use axum::{
     extract::{Query, Request, State},
@@ -124,8 +125,8 @@ async fn survey_handler(
     Ok(Json(res))
 }
 
-async fn register_user(Json(payload): Json<User>) -> Result<Json<serde_json::Value>> {
-    let _ = add_user(payload)?;
+async fn register_user(State(state):State<AppState>,Json(payload): Json<User>) -> Result<Json<serde_json::Value>> {
+    let _ = state.db.create_user(&payload).await?;
     Ok(Json(json!({"message": "User registered successfully"})))
 }
 

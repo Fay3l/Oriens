@@ -16,11 +16,11 @@ impl DB {
     }
 
 
-    pub async fn create_user(&self, user: &User) -> Result<(), sqlx::Error> {
+    pub async fn create_user(&self, user: &User) -> Result<Uuid, sqlx::Error> {
         match self.exist_user(&user.email).await {
             Ok(true) => {
                 println!("User already exists");
-                Ok(())
+                Ok(Uuid::nil())
             },
             Ok(false)=>{
                 let id  = Uuid::now_v7();
@@ -48,7 +48,7 @@ impl DB {
                 )
                 .execute(&self.db)
                 .await?;
-                Ok(())
+                Ok(id)
             }
             Err(e)=>{
                 Err(e)
@@ -134,5 +134,17 @@ impl DB {
         .execute(&self.db)
         .await?;
         Ok(())
+    }
+
+    pub async fn get_user_id(&self, email: &str) -> Result<GetUserId, sqlx::Error> {
+        let user = sqlx::query!(
+            r#"
+            SELECT id FROM users WHERE email=$1
+            "#,
+            email,
+        )
+        .fetch_one(&self.db)
+        .await?;
+        Ok(GetUserId{id: user.id})
     }
 }

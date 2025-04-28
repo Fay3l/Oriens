@@ -91,31 +91,68 @@ async fn handler() -> Html<&'static str> {
     Html("<h1>Hello, World!</h1>")
 }
 
-async fn login_user(Json(payload): Json<UserLogin>) -> Json<serde_json::Value> {
+async fn login_user(State(state):State<AppState>,Json(payload): Json<UserLogin>) -> Json<serde_json::Value> {
     println!("{:?}", payload);
-    match verify_user(&payload.username, &payload.password) {
-        Ok(true) => {
-            let mut user = match load_user(&payload.username) {
-                Ok(user) => user,
-                Err(e) => return Json(json!({"message": format!("{:?}",e.0)  , "code":StatusCode::INTERNAL_SERVER_ERROR.as_u16()})),
-            };
-            println!("Add experience");
-            // Add experience
-            add_experience(&mut user, 10);
-            println!("Upload user");
-            // Save the updated user
-            if let Err(e) = save_user(&user) {
-                return Json(json!({"message": format!("{:?}",e.0)  , "code":StatusCode::INTERNAL_SERVER_ERROR.as_u16()}));
-            }
-            println!("Create Token ");
-            match create_jwt(&payload.username) {
-                Ok(token) => Json(json!({"token": token})),
-                Err(e) => Json(json!({"message": format!("{:?}",e.0)  , "code":StatusCode::INTERNAL_SERVER_ERROR.as_u16()})),
+    match state.db.verify_user(&payload.lastname, &payload.email, &payload.password).await{
+        Ok(user_id) => {
+            if user_id.id != uuid::Uuid::nil() {
+                match state.db.load_user(user_id.id).await {
+                    Ok(user) => {
+                        let mut u = User{
+                            username: user.username,
+                            firstname: user.firstname,
+                            lastname: user.lastname,
+                            address: user.address.unwrap(),
+                            email: user.email,
+                            city: user.city.unwrap(),
+                            postalcode: user.postalcode.unwrap() as u32,
+                            number_phone: user.number_phone.unwrap(),
+                            age: user.age as u8,
+                            password: payload.password.clone(),
+                            role: user.role,
+                            experience: user.experience as u32,
+                            badges: user.badges.as_array()
+                                .unwrap_or(&vec![])
+                                .iter()
+                                .filter_map(|badge| badge.as_str().map(String::from))
+                                .collect(),
+                        };
+                        add_experience(&mut u, 10);
+                        let token = create_jwt(user_id.id).unwrap();
+                        return Json(json!({"token": token}))
+                    }
+                    Err(e) => return Json(json!({"message": format!("{:?}",e)  , "code":StatusCode::INTERNAL_SERVER_ERROR.as_u16()})),
+                }
+                
+            } else {
+                return Json(json!({"error": "Invalid credentials"}))
             }
         }
-        Ok(false) => Json(json!({"error": "Invalid credentials"})),
-        Err(e) => Json(json!({"message": format!("{:?}",e.0)  , "code":StatusCode::INTERNAL_SERVER_ERROR.as_u16()})),
+        Err(e) => return Json(json!({"message": format!("{:?}",e)  , "code":StatusCode::INTERNAL_SERVER_ERROR.as_u16()})),
     }
+    // match verify_user(&payload.username, &payload.password) {
+    //     Ok(true) => {
+    //         let mut user = match load_user(&payload.username) {
+    //             Ok(user) => user,
+    //             Err(e) => return Json(json!({"message": format!("{:?}",e.0)  , "code":StatusCode::INTERNAL_SERVER_ERROR.as_u16()})),
+    //         };
+    //         println!("Add experience");
+    //         // Add experience
+    //         add_experience(&mut user, 10);
+    //         println!("Upload user");
+    //         // Save the updated user
+    //         if let Err(e) = save_user(&user) {
+    //             return Json(json!({"message": format!("{:?}",e.0)  , "code":StatusCode::INTERNAL_SERVER_ERROR.as_u16()}));
+    //         }
+    //         println!("Create Token ");
+    //         match create_jwt(&payload.username) {
+    //             Ok(token) => Json(json!({"token": token})),
+    //             Err(e) => Json(json!({"message": format!("{:?}",e.0)  , "code":StatusCode::INTERNAL_SERVER_ERROR.as_u16()})),
+    //         }
+    //     }
+    //     Ok(false) => Json(json!({"error": "Invalid credentials"})),
+    //     Err(e) => Json(json!({"message": format!("{:?}",e.0)  , "code":StatusCode::INTERNAL_SERVER_ERROR.as_u16()})),
+    // }
 }
 
 async fn survey_handler(
@@ -187,28 +224,18 @@ async fn handle_google_callback(
         .await
         .expect("Failed to parse user info");
 
-    // Extraire les informations de l'utilisateur
+    // Extract information of user
     let email = user_info["email"].as_str().unwrap_or_default();
     let firstname = user_info["given_name"].as_str().unwrap_or_default();
     let lastname = user_info["family_name"].as_str().unwrap_or_default();
 
-    // Vérifier si l'utilisateur existe déjà
-    let mut file = File::open("data.json").unwrap_or_else(|_| File::create("data.json").unwrap());
-    let mut contents = String::new();
-    file.read_to_string(&mut contents).unwrap();
-    let mut users: Vec<User> = if contents.is_empty() {
-        Vec::new()
-    } else {
-        serde_json::from_str(&contents).unwrap()
-    };
-
-    if let Some(existing_user) = users.iter().find(|u| u.email == email) {
-        // L'utilisateur existe déjà, retournez un token JWT
-        let token = create_jwt(&existing_user.username)?;
+    // Verify if the user already exists in the database
+    if state.db.exist_user(email).await?  {
+        let user_id = state.db.get_user_id(email).await?;
+        let token = create_jwt(user_id.id)?;
         return Ok(Json(json!({ "token": token })));
     }
-
-    // Créer un nouvel utilisateur
+    // Create a new user
     let new_user = User {
         username: format!("{}{}", firstname, lastname),
         firstname: firstname.to_string(),
@@ -218,20 +245,17 @@ async fn handle_google_callback(
         city: "Unknown".to_string(),
         postalcode: 0,
         number_phone: 0.to_string(),
+        role: "".to_string(),
         age: 0,
         password: hash("default_password", DEFAULT_COST).unwrap(),
         experience: 0,
         badges: Vec::new(),
     };
 
-    users.push(new_user.clone());
-
-    // Sauvegarder le nouvel utilisateur
-    let users_json = serde_json::to_string_pretty(&users).unwrap();
-    let mut file = File::create("data.json").unwrap();
-    file.write_all(users_json.as_bytes()).unwrap();
+    // add New user to database
+    let id = state.db.create_user(&new_user).await?;
 
     // Retourner un token JWT
-    let token = create_jwt(&new_user.username)?;
+    let token = create_jwt(id)?;
     Ok(Json(json!({ "token": token })))
 }

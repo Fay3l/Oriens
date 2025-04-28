@@ -9,7 +9,7 @@ use jsonwebtoken::{encode, EncodingKey, Header};
 use mistralai_client::v1::chat::{ChatMessage, ChatMessageRole, ChatParams, ResponseFormat};
 use mistralai_client::v1::client::Client;
 use mistralai_client::v1::constants::Model;
-use models::{AppState, Badge, Claims, GoogleAuth, Job, Jobs, MetiersPossibles, Question, Questionnaire, Section, User};
+use models::{AppState, Badge, Claims, GetUser, GoogleAuth, Job, Jobs, MetiersPossibles, Question, Questionnaire, Section, User};
 use quick_xml::de::from_str;
 use std::fs::{ self, File, OpenOptions};
 use std::io::{self, BufReader, Read, Seek, Write};
@@ -145,7 +145,7 @@ pub fn create_jwt(id: uuid::Uuid) -> api::Result<String> {
 }
 
 pub fn add_experience(user: &mut User, experience: u32) {
-    user.experience += experience;
+    user.experience += experience ;
     check_badges(user);
 }
 

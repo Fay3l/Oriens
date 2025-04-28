@@ -26,6 +26,7 @@ pub struct User {
     pub age: u8,
     pub password: String,
     pub experience: u32,
+    pub role: String,
     pub badges: Vec<String>,
 }
 
@@ -44,6 +45,7 @@ pub struct GetUser {
     pub age: i32,
     pub password: String,
     pub experience: i32,
+    pub role:String,
     pub badges: serde_json::Value,
 }
 
@@ -54,7 +56,9 @@ pub struct GetUserId {
 
 #[derive(Serialize, Clone,  Deserialize, Debug)]
 pub struct UserLogin {
-    pub username: String,
+    pub email: String,
+    pub lastname:String,
+    pub firstname:String,
     pub password: String,
 }
 #[derive(Serialize, Deserialize, Debug)]

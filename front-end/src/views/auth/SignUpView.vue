@@ -8,6 +8,7 @@ import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import { VueSimplePhone } from 'vue-simple-phone'
+import 'vue-simple-phone/themes/light.css' 
 
 
 const initialValues = ref({
@@ -179,8 +180,10 @@ const onGoogleSubmit = (e: any) => {
                         </div>
                     </div>
                 </div>
-                <Button @click="onGoogleSubmit" severity="secondary" label="Se connecter avec Google"
-                    class="col-span-2 mt-4" />
+                <Button @click="onGoogleSubmit"  severity="secondary"  class="col-span-2 mt-4">
+                    <img src="../../images/Google_logo.svg" class="h-5 w-5" alt="Goolge Logo" />
+                    <p>Se connecter avec Google</p>
+                </Button>
                 <button
                     class="px-5 py-2 linegradient  text-white col-span-2 rounded-lg shadow-md hover:bg-orangelight hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                     S'inscrire

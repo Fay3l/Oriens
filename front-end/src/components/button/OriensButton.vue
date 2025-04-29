@@ -7,22 +7,28 @@ const props = defineProps({
     size: {
         type: String,
         default: ''
+    },
+    class: {
+        type: String,
+        default: ''
     }
 });
 </script>
 
 <template>
-    <div v-if="size === 'small'">
-        <button
-            class="linegradient text-white py-2 px-2 rounded-lg shadow-md hover:bg-orangelight hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-            {{ props.label }}
-        </button>
-    </div>
-    <div v-else>
+    <div>
+        <div v-if="size === 'small'">
             <button
-                class="linegradient text-white py-5 px-5 rounded-lg shadow-md hover:bg-orangelight hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                :class="`linegradient text-white py-2 px-2 rounded-lg shadow-md hover:bg-orangelight hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 ${props.class}`">
                 {{ props.label }}
             </button>
+        </div>
+        <div v-else>
+            <button
+                :class="`linegradient text-white py-5 px-5 rounded-lg shadow-md hover:bg-orangelight hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 ${props.class}`">
+                {{ props.label }}
+            </button>
+        </div>
     </div>
 </template>
 

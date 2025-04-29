@@ -25,8 +25,8 @@ pub fn api_routes() -> Router<AppState> {
         .route("/api/login", post(login_user))
         .route("/api/jobs/search", get(jobssearch_handler).layer(from_fn(validate_token)))
         .route("/api/survey/result", post(survey_handler).layer(from_fn(validate_token)))
-        .route("/auth/google", get(start_google_auth))
-        .route("/auth/google/callback", get(handle_google_callback))
+        .route("/api/auth/google", get(start_google_auth))
+        .route("/api/auth/google/callback", get(handle_google_callback))
 }
 
 pub type Result<T> = std::result::Result<T, AppError>;
@@ -245,7 +245,7 @@ async fn handle_google_callback(
         city: "Unknown".to_string(),
         postalcode: 0,
         number_phone: 0.to_string(),
-        role: "".to_string(),
+        role: "google_user".to_string(),
         age: 0,
         password: hash("default_password", DEFAULT_COST).unwrap(),
         experience: 0,

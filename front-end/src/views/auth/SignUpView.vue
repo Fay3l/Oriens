@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Form } from '@primevue/forms';
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 import { zodResolver } from '@primevue/forms/resolvers/zod';
 import { z } from 'zod';
 import Message from 'primevue/message';
@@ -80,21 +80,10 @@ const onFormSubmit = (e: any) => {
 };
 const onGoogleSubmit = (e: any) => {
     console.log(initialValues.value);
-    fetch('/api/google', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(initialValues.value)
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-
+    nextTick(() => {
+        window.open('/api/auth/google', '_self');
+    });
+    
 };
 </script>
 
@@ -181,7 +170,7 @@ const onGoogleSubmit = (e: any) => {
                     </div>
                 </div>
                 <Button @click="onGoogleSubmit"  severity="secondary"  class="col-span-2 mt-4">
-                    <img src="../../images/Google_logo.svg" class="h-5 w-5" alt="Goolge Logo" />
+                    <img src="../../images/Google_logo.svg" class="h-5 w-5" alt="Google Logo" />
                     <p>Se connecter avec Google</p>
                 </Button>
                 <button

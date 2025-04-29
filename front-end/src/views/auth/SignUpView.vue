@@ -7,8 +7,11 @@ import Message from 'primevue/message';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
-import { VueSimplePhone } from 'vue-simple-phone'
+import { VueSimplePhone, type ParsedPhoneNumber } from 'vue-simple-phone'
 import 'vue-simple-phone/themes/light.css' 
+import OriensButton from '@/components/button/OriensButton.vue';
+
+const number_phone = ref(<ParsedPhoneNumber | undefined>undefined);
 
 
 const initialValues = ref({
@@ -26,6 +29,8 @@ const initialValues = ref({
     experience: 0,
     badges: []
 });
+
+
 
 const resolver = zodResolver(
     z.object({
@@ -61,8 +66,9 @@ const resolver = zodResolver(
 );
 
 const onFormSubmit = (e: any) => {
+    initialValues.value.number_phone = number_phone.value?.number?.e164 || ''
     console.log(initialValues.value);
-    fetch('/api/login', {
+    fetch('/api/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -131,7 +137,7 @@ const onGoogleSubmit = (e: any) => {
                 </div>
                 <div class="flex flex-col gap-1 col-span-2">
                     <label for="number_phone" class="font-bold">Numéro de téléphone</label>
-                    <VueSimplePhone/>
+                    <VueSimplePhone region="FR" :countries="['US', 'CN', 'FR', 'SE', 'MX', 'JP']" v-model="number_phone" />
                     <Message v-if="$form.number_phone?.invalid" severity="error" size="small" variant="simple">{{
                         $form.number_phone.error.message }}</Message>
                 </div>
@@ -173,10 +179,10 @@ const onGoogleSubmit = (e: any) => {
                     <img src="../../images/Google_logo.svg" class="h-5 w-5" alt="Google Logo" />
                     <p>Se connecter avec Google</p>
                 </Button>
-                <button
-                    class="px-5 py-2 linegradient  text-white col-span-2 rounded-lg shadow-md hover:bg-orangelight hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                    S'inscrire
-                </button>
+                <div class="col-span-2">
+                    <OriensButton class="w-full " size="small" label="S'inscrire"></OriensButton>
+                </div>
+                
             </Form>
         </div>
     </div>

@@ -10,6 +10,8 @@ import Card from 'primevue/card';
 import OriensButton from '@/components/button/OriensButton.vue';
 const initialValues = ref({
     email: '',
+    firstname: '',
+    lastname: '',
     password: ''
 })
 
@@ -37,9 +39,22 @@ const resolver = zodResolver(
 );
 
 const handleLogin = () => {
-    // Add your login logic here
-    console.log("Email:", initialValues.value.email);
-    console.log("Password:", initialValues.value.password);
+    console.log(initialValues.value);
+    fetch('/api/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(initialValues.value)
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+
 };
 const onGoogleSubmit = (e: any) => {
     console.log(initialValues.value);

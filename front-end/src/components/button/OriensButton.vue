@@ -19,10 +19,10 @@ const props = defineProps({
         </button>
     </div>
     <div v-else>
-        <button
-            class="linegradient text-white py-5 px-5 rounded-lg shadow-md hover:bg-orangelight hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-            {{ props.label }}
-        </button>
+            <button
+                class="linegradient text-white py-5 px-5 rounded-lg shadow-md hover:bg-orangelight hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                {{ props.label }}
+            </button>
     </div>
 </template>
 

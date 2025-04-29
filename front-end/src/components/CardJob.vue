@@ -14,7 +14,7 @@ import Card from 'primevue/card';
                     <p>Lorem ipsum dolor sit amet lorem</p>
                 </div>
                 <div>
-                    <img class="shadow-img lg:w-20 sm:w-30 h-26 " " src="./../images/image_pack.png">
+                    <img class="shadow-img lg:w-20 sm:w-30 h-26 " alt="" src="./../images/image_pack.png">
                 </div>
             </div>
         </template>

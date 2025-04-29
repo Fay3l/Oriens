@@ -3,13 +3,12 @@ import { Form } from '@primevue/forms';
 import { ref } from 'vue';
 import { zodResolver } from '@primevue/forms/resolvers/zod';
 import { z } from 'zod';
-import InputMask from 'primevue/inputmask';
 import Message from 'primevue/message';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
-import RadioButton from 'primevue/radiobutton';
-import OriensButton from '@/components/button/OriensButton.vue';
+import { VueSimplePhone } from 'vue-simple-phone'
+
 
 const initialValues = ref({
     firstname: '',
@@ -142,49 +141,57 @@ const onGoogleSubmit = (e: any) => {
                 </div>
                 <div class="flex flex-col gap-1 col-span-2">
                     <label for="number_phone" class="font-bold">Numéro de téléphone</label>
-                    <InputMask id="number_phone" v-model="initialValues.number_phone" mask="+(999) 999-9999"
-                        placeholder="+(999) 999-9999" fluid />
+                    <VueSimplePhone/>
                     <Message v-if="$form.number_phone?.invalid" severity="error" size="small" variant="simple">{{
                         $form.number_phone.error.message }}</Message>
                 </div>
-                <div class="grid">
-                    <div class="grid grid-cols-4 gap-50">
-                        <div class="grid grid-cols-2">
+                <div class="grid grid-cols-4 items-center col-span-2 ">
+                    <div>
+                        <div class="flex gap-1 items-center">
                             <input
                                 class="appearance-none w-4 h-4 border-2 border-gray-300 rounded-md checked:bg-orange checked:border-orange focus:outline-none m-2"
                                 v-model="initialValues.role" id="role1" type="radio" value="HighSchoolStudent" />
-                            <label for="role1">Lycéen/ne</label>
+                            <label class="text-sm" for="role1">Lycéen/ne</label>
                         </div>
-                        <div class="grid grid-cols-2">
+                    </div>
+                    <div>
+                        <div class="flex gap-1 items-center">
                             <input
                                 class="appearance-none w-4 h-4 border-2 border-gray-300 rounded-md checked:bg-orange checked:border-orange focus:outline-none m-2"
                                 v-model="initialValues.role" id="role2" type="radio" value="PostBacStudent" />
-                            <label for="role2">Étudiant/te post-bac</label>
+                            <label class="text-sm" for="role2">Étudiant/te post-bac</label>
                         </div>
-                        <div class="grid grid-cols-2">
+                    </div>
+                    <div>
+                        <div class="flex gap-1 items-center">
                             <input
                                 class="appearance-none w-4 h-4 border-2 border-gray-300 rounded-md checked:bg-orange checked:border-orange focus:outline-none"
                                 v-model="initialValues.role" id="role3" type="radio" value="ParentStudent" />
-                            <label for="role3">Parent d'élève</label>
+                            <label class="text-sm" for="role3">Parent d'élève</label>
                         </div>
-                        <div class="grid grid-cols-2">
+                    </div>
+                    <div>
+                        <div class="flex gap-1 items-center">
                             <input
                                 class="appearance-none w-4 h-4 border-2 border-gray-300 rounded-md checked:bg-orange checked:border-orange focus:outline-none"
                                 v-model="initialValues.role" id="role4" type="radio" value="Reorientation" />
-                            <label for="role4">En réorientation</label>
+                            <label class="text-sm" for="role4">En réorientation</label>
                         </div>
                     </div>
                 </div>
                 <Button @click="onGoogleSubmit" severity="secondary" label="Se connecter avec Google"
                     class="col-span-2 mt-4" />
-                <OriensButton label="S'inscrire" class=""></OriensButton>
+                <button
+                    class="px-5 py-2 linegradient  text-white col-span-2 rounded-lg shadow-md hover:bg-orangelight hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                    S'inscrire
+                </button>
             </Form>
         </div>
     </div>
 </template>
 
 <style lang="css" scoped>
-.image-welcome {
-    background-image: url('../../images/welcome_oriens.svg');
+.linegradient {
+    background: linear-gradient(to bottom, #EE7213 0%, #F09A4E 100%);
 }
 </style>

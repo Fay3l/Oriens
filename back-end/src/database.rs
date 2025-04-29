@@ -28,8 +28,8 @@ impl DB {
                 println!("User does not exist, creating user");
                 sqlx::query!(
                     r#"
-                    INSERT INTO users (username, firstname, lastname, address, email, city, postalcode, number_phone, age, password, experience, badges,id)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,$13)
+                    INSERT INTO users (username, firstname, lastname, address, email, city, postalcode, number_phone, age, password, experience, badges,id,role)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,$13,$14)
                     ON CONFLICT (email) DO NOTHING
                     "#,
                     user.username,
@@ -44,7 +44,8 @@ impl DB {
                     hashed_password,
                     user.experience as i32,
                     serde_json::to_value(&user.badges).unwrap(),
-                    id
+                    id,
+                    user.role 
                 )
                 .execute(&self.db)
                 .await?;
@@ -71,7 +72,10 @@ impl DB {
         .await?;
 
         if let Some(user) = user {
+            println!("User found{:?}", user);
+            
             if verify(password, &user.password).unwrap() {
+                println!("User connected");
                 return Ok(GetUserId{id: user.id});
             }
         }

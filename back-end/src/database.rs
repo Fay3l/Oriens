@@ -1,8 +1,7 @@
-use actix_web::guard::Get;
 use sqlx::postgres::{PgPool, PgPoolOptions};
 use bcrypt::{hash, verify, DEFAULT_COST};
 use uuid::Uuid;
-use crate::{models::{GetUser, GetUserId, User}, verify_user};
+use crate::models::{GetUser, GetUserId, User};
 
 #[derive(Debug,Clone)]
 pub struct DB{

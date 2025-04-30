@@ -1,30 +1,42 @@
 <script setup lang="ts">
+import { Jobs } from '@/composables/jobs';
 import Card from 'primevue/card';
+import Button from 'primevue/button';
+
+const props = defineProps({
+    job:{
+        type: Jobs,
+        default: () => ({
+            identifiant: "",
+            nom_metier: '',
+            acces_metier: "Pas d'accès au metier ",
+            competences:"",
+        })
+    } 
+});
 </script>
 
 <template>
     <Card class="border">
         <template #content>
-            <div class="flex flex-row gap-4 items-center">
-                <div class="flex flex-col gap-1" >
-                    <div class="flex mb-6">
-                        <p class="text-white font-bold bg-orange p-1  ">OUVRIER</p>
-                    </div>
-                    <p class="font-bold text-xl text-black">Lorem ipsum dolor sit amet lorem</p>
-                    <p>Lorem ipsum dolor sit amet lorem</p>
-                </div>
+            <div class="flex flex-col gap-4 items-center">
                 <div>
-                    <img class="shadow-img lg:w-20 sm:w-30 h-26 " alt="" src="./../images/image_pack.png">
+                    <img class=" lg:w-29 sm:w-30 h-26 " alt="" src="./../images/jobs_card.svg">
                 </div>
+                <div class="flex flex-col items-center gap-1" >
+                    <div class="flex mb-2">
+                        <p class="text-orange text-base font-bold ">{{ props.job.nom_metier }}</p>
+                    </div>
+                    <p class="font-bold text-base text-black">UX review presentations<i class="pi pi-arrow-up-right ml-3"></i></p>
+                    <p>{{ props.job.competences }}</p>
+                    <Button icon="pi pi-heart" variant="text" rounded aria-label="Favorite" />
+                </div>
+                
             </div>
         </template>
     </Card>
 </template>
 
 <style lang="css" scoped>
-.shadow-img{
-    border-radius: 15px;
-    box-shadow: 10px 10px #EE7213;
 
-}
 </style>

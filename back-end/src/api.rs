@@ -1,10 +1,7 @@
-
-use std::{fmt::format, fs::File, io::{Read, Write}, sync::{Arc, RwLock}};
-
 use crate::{
-    add_experience, add_user, create_jwt, jobs, load_user, models::{
-        AppState, Claims, GoogleAuth, Job, MetiersPossibles, OAuthCallback, Question, Questionnaire, SearchQuery, Section, User, UserLogin
-    }, questionnaire_result, save_user, verify_user,database
+    add_experience, create_jwt,  jobs_search, models::{
+        AppState, Claims, Job, JobsPagination, MetiersPossibles, OAuthCallback, SearchQuery, Section, User, UserLogin
+    }, questionnaire_result
 };
 use axum::{
     extract::{Query, Request, State},
@@ -23,6 +20,7 @@ pub fn api_routes() -> Router<AppState> {
         .route("/api", get(handler).layer(from_fn(validate_token)))
         .route("/api/register", post(register_user))
         .route("/api/login", post(login_user))
+        .route("/api/jobs", get(jobs_handler))
         .route("/api/jobs/search", get(jobssearch_handler).layer(from_fn(validate_token)))
         .route("/api/survey/result", post(survey_handler).layer(from_fn(validate_token)))
         .route("/api/auth/google", get(start_google_auth))
@@ -168,8 +166,32 @@ async fn register_user(State(state):State<AppState>,Json(payload): Json<User>) -
 }
 
 async fn jobssearch_handler(Query(search): Query<SearchQuery>) -> Result<Json<Vec<Job>>> {
-    let res = jobs(&search.search).await?;
+    let res = jobs_search(&search.search).await?;
     Ok(Json(res))
+}
+
+async fn jobs_handler(State(state):State<AppState>) -> Result<Json<Vec<Job>>> {
+    let res = state.metiers.read().unwrap().metiers.clone();
+    Ok(Json(res))
+}
+
+async fn jobs_pagination_handler(
+    State(state):State<AppState>,
+    Query(params): Query<JobsPagination>,
+) -> Result<Json<Vec<Job>>> {
+    let res = state.metiers.read().unwrap().metiers.clone();
+    let page = params.page;
+    let per_page= params.per_page;
+    let start = (page - 1) * per_page;
+    let end = start + per_page;
+
+    let paginated_jobs = if start < res.len().try_into().unwrap() {
+        res[start as usize..std::cmp::min(end as usize, res.len())].to_vec()
+    } else {
+        Vec::new()
+    };
+
+    Ok(Json(paginated_jobs))
 }
 
 async fn start_google_auth(State(state):State<AppState>) -> Redirect {

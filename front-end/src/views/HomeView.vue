@@ -16,7 +16,7 @@ import GroupCardJob from '@/components/GroupCardJob.vue';
     <p class="">LES JEUNES DE 12 À 18 ANS</p>
   </div>
   <div>
-    <GroupCardJob></GroupCardJob>
+    <GroupCardJob class="flex flex-col items-center gap-2 m-2"></GroupCardJob>
   </div>
 </template>
 

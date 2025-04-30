@@ -1,18 +1,15 @@
 mod models;
 mod api;
 mod database;
-use api::AppError;
-use axum::{ Json, Router};
-use bcrypt::{hash, verify, DEFAULT_COST};
+use axum::Router;
 use chrono;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use mistralai_client::v1::chat::{ChatMessage, ChatMessageRole, ChatParams, ResponseFormat};
 use mistralai_client::v1::client::Client;
 use mistralai_client::v1::constants::Model;
-use models::{AppState, Badge, Claims, GetUser, GoogleAuth, Job, Jobs, MetiersPossibles, Question, Questionnaire, Section, User};
+use models::{AppState, Badge, Claims, GoogleAuth, Job, Jobs, MetiersPossibles, Section, User};
 use quick_xml::de::from_str;
-use std::fs::{ self, File, OpenOptions};
-use std::io::{self, BufReader, Read, Seek, Write};
+use std::fs::{self};
 use std::sync::{Arc, RwLock};
 use tower_http::cors::{Any, CorsLayer};
 
@@ -55,48 +52,10 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-pub fn add_user(user: User) -> api::Result<()> {
-    let file = OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create(true)
-        .append(true)
-        .open("data.json")?;
-
-    let mut reader = BufReader::new(file);
-    let mut contents = String::new();
-    reader.read_to_string(&mut contents)?;
-
-    let mut users: Vec<User> = if contents.is_empty() {
-        Vec::new()
-    } else {
-        serde_json::from_str(&contents)?
-    };
-
-    let hashed_password = hash(&user.password, DEFAULT_COST)?;
-    let user_with_hashed_password = User {
-        password: hashed_password,
-        ..user
-    };
-
-    users.push(user_with_hashed_password);
-    
-    // Sérialiser la liste mise à jour en JSON
-    let users_json = serde_json::to_string_pretty(&users)?;
-
-    // Réécrire le fichier avec la liste mise à jour
-    let mut file = OpenOptions::new()
-        .write(true)
-        .truncate(true)
-        .open("data.json")?;
-    file.write_all(users_json.as_bytes())?;
-
-    Ok(())
-}
 
 
 
-pub async fn jobs(query: &str) -> api::Result<Vec<Job>> {
+pub async fn jobs_search(query: &str) -> api::Result<Vec<Job>> {
     let file = tokio::fs::read_to_string("Onisep_Ideo_Fiches_Metiers_09122024.xml").await?;
     let res: Jobs = from_str(&file)?;
     let mut items = vec![];
@@ -109,20 +68,6 @@ pub async fn jobs(query: &str) -> api::Result<Vec<Job>> {
     Ok(items)
 }
 
-pub fn verify_user(username: &str, password: &str) -> api::Result<bool> {
-    let mut file = File::open("data.json")?;
-    let mut contents = String::new();
-    file.read_to_string(&mut contents)?;
-    println!("{:?}", contents);
-    let users: Vec<User> = serde_json::from_str(&contents)?;
-    println!("{:#?}", users);
-    for item in users {
-        if item.username == username && verify(password, &item.password)? {
-            return Ok(true);
-        }
-    }
-    Ok(false)
-}
 
 pub fn create_jwt(id: uuid::Uuid) -> api::Result<String> {
     let expiration = chrono::Utc::now()
@@ -172,51 +117,6 @@ pub fn check_badges(user: &mut User) {
     }
 }
 
-pub fn save_user(user: &User) -> api::Result<()> {
-    let mut file = OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create(true)
-        .open("data.json")?;
-
-    let mut contents = String::new();
-    file.read_to_string(&mut contents)?;
-
-    let mut users: Vec<User> = if contents.is_empty() {
-        Vec::new()
-    } else {
-        serde_json::from_str(&contents)?
-    };
-
-    // Trouver l'index de l'utilisateur à mettre à jour
-    if let Some(index) = users.iter().position(|u| u.username == user.username) {
-        users[index] = user.clone();
-    } else {
-        users.push(user.clone());
-    }
-
-    let users_json = serde_json::to_string_pretty(&users)?;
-    file.set_len(0)?; // Truncate the file
-    file.seek(io::SeekFrom::Start(0))?; // Go to the start of the file
-    file.write_all(users_json.as_bytes())?;
-
-    Ok(())
-}
-
-pub fn load_user(username: &str) -> api::Result<Json<User>> {
-    let mut file = File::open("data.json")?;
-    let mut contents = String::new();
-    file.read_to_string(&mut contents)?;
-    let users: Vec<User> = serde_json::from_str(&contents)?;
-
-    for user in users {
-        if user.username == username {
-            return Ok(Json(user));
-        }
-    }
-
-    Err(AppError(anyhow::anyhow!("User not found")))
-}
 
 
 pub fn mistral_chat(content:String)-> api::Result<mistralai_client::v1::chat::ChatResponse> {

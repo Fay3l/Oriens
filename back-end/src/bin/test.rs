@@ -249,7 +249,7 @@ fn main() {
         ]
     }
 ]"#;
-    let data_modified = data.replace("\n", " ").replace("\r", "");
+    let _data_modified = data.replace("\n", " ").replace("\r", "");
     let object_json = r#"
     {
     "metiers_possibles": [

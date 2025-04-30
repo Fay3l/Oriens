@@ -72,13 +72,14 @@ pub struct Claims {
     pub sub: String,
     pub exp: usize,
 }
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug,Clone, Deserialize, Serialize)]
 pub struct Job {
     pub identifiant: String,
     pub nom_metier: String,
-    pub acces_metier: String
+    pub acces_metier: String,
+    pub competences: String,
 }
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Jobs {
     #[serde(rename = "metier")]
     pub metiers: Vec<Job>,
@@ -94,6 +95,12 @@ pub struct Question{
     pub question: String,
     pub response: String,
     pub options: Vec<String>,
+}
+
+#[derive(Debug,Deserialize,Clone,Serialize)]
+pub struct JobsPagination{
+    pub page: u32,
+    pub per_page: u32,
 }
 
 #[derive(Debug,Deserialize,Clone,Serialize)]

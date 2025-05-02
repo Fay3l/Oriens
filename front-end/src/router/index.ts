@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import Questionnaire from '@/components/Questionnaire.vue'
 import SignUpView from '@/views/auth/SignUpView.vue'
 import LogInView from '@/views/auth/LogInView.vue'
+import CallVideoView from '@/views/CallVideoView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,6 +12,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+    },
+    {
+      path:'/call',
+      name: 'call',
+      component: CallVideoView
     },
     {
       path: '/auth',

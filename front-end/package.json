@@ -11,9 +11,11 @@
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
+    "@jitsi/vue-sdk": "^1.0.4",
     "@primeuix/styles": "^1.0.0",
     "@primevue/forms": "^4.3.1",
     "@primevue/themes": "^4.2.5",
+    "lib-jitsi-meet": "^1.0.6",
     "primeicons": "^7.0.0",
     "primevue": "^4.2.5",
     "tailwindcss-primeui": "^0.3.4",

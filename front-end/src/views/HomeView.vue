@@ -1,6 +1,19 @@
 <script setup lang="ts">
 import HeaderHomeView from '@/components/HeaderHomeView.vue';
 import GroupCardJob from '@/components/GroupCardJob.vue';
+import { onMounted,ref } from 'vue';
+import type { Jobs } from '@/composables/jobs';
+
+const jobs = ref<Jobs[]>([]);
+onMounted(() => {
+  fetch('http://localhost:3000/api/jobs?page=1&per_page=2')
+    .then((response) => response.json())
+    .then((data) => {
+      jobs.value = data;
+      console.log('Jobs fetched:', jobs.value);
+    })
+    .catch((error) => console.error('Error fetching jobs:', error));
+});
 </script>
 
 
@@ -16,7 +29,7 @@ import GroupCardJob from '@/components/GroupCardJob.vue';
     <p class="">LES JEUNES DE 12 À 18 ANS</p>
   </div>
   <div>
-    <GroupCardJob class="flex flex-col items-center gap-2 m-2"></GroupCardJob>
+    <GroupCardJob class="flex flex-col items-center gap-2 m-5" :jobs="jobs" ></GroupCardJob>
   </div>
 </template>
 

@@ -7,10 +7,10 @@ const props = defineProps({
     job:{
         type: Jobs,
         default: () => ({
-            identifiant: "",
             nom_metier: '',
-            acces_metier: "Pas d'accès au metier ",
-            competences:"",
+            competences: '',
+            identifiant: '',
+            acces_metier: '',
         })
     } 
 });
@@ -28,7 +28,7 @@ const props = defineProps({
                         <p class="text-orange text-base font-bold ">{{ props.job.nom_metier }}</p>
                     </div>
                     <p class="font-bold text-base text-black">UX review presentations<i class="pi pi-arrow-up-right ml-3"></i></p>
-                    <p>{{ props.job.competences }}</p>
+                    {{ props.job.competences }}
                     <Button icon="pi pi-heart" variant="text" rounded aria-label="Favorite" />
                 </div>
                 

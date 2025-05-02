@@ -7,23 +7,19 @@ const props = defineProps({
         default:''
     },
     
-    job:{
-        type: Jobs,
-        default: () => ({
-            identifiant: "",
-            nom_metier: '',
-            acces_metier: "Pas d'accès au metier ",
-            competences:"",
-        })
+    jobs:{
+        type: Array<Jobs>,
+        default: () => [],
     } 
 });
+console.log('props', props.jobs);
 </script>
 
 <template>
     <div :class="props.class" >
-        <div v-for="index in 2" :key="index">
+        <div v-for="job in props.jobs" :key="job.identifiant">
             <div>
-                <CardJob :job="props.job" />
+                <CardJob :job="job" />
             </div>
         </div>
     </div>

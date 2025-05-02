@@ -1,3 +1,4 @@
+
 export class Jobs{
     identifiant: string;
     nom_metier: string;
@@ -10,3 +11,4 @@ export class Jobs{
         this.competences = competences;
     }
 }
+

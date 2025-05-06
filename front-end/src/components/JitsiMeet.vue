@@ -1,16 +1,13 @@
+<script setup>
 
-<script setup lang="ts">
-import JitsiMeetJS from './../../lib-jitsi-meet.min.js';
-JitsiMeetJS.init();
+
 </script>
 
 <template>
     <div class="flex flex-col items-center justify-center h-screen">
-        <h1 class="text-2xl font-bold mb-4">Jitsi Meet</h1>
-        <JitsiMeeting></JitsiMeeting>
+        <iframe
+            title="MiroTalk"
+            allow="camera; microphone; display-capture; fullscreen; clipboard-read; clipboard-write; web-share; autoplay"
+            src="https://sfu.mirotalk.com/newroom" style="width: 100vw; height: 100vh; border: 0px;"></iframe>
     </div>
 </template>
-
-<style scoped lang="css">
-
-</style>

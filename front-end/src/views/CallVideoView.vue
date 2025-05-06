@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import JitsiMeet from '@/components/JitsiMeet.vue';
+import MiroTalk from '@/components/MiroTalk.vue';
 
 </script>
 <template>
-    <JitsiMeet></JitsiMeet>
+    <MiroTalk></MiroTalk>
 </template>

@@ -1,11 +1,11 @@
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 
-export class Jobs{
+export class Jobs {
     identifiant: string;
     nom_metier: string;
     acces_metier: string;
-    competences:string;
-    constructor(identifiant: string, nom_metier: string, acces_metier: string,competences:string) {
+    competences: string;
+    constructor(identifiant: string, nom_metier: string, acces_metier: string, competences: string) {
         this.identifiant = identifiant;
         this.nom_metier = nom_metier;
         this.acces_metier = acces_metier;
@@ -13,12 +13,13 @@ export class Jobs{
     }
 }
 
-export const jobs = computed(() => { 
-    fetch('http://localhost:3000/api/jobs?page=1&per_page=4')
+export async function jobs(page: number, per_page: number):Promise<Jobs[]>{
+    const res =  await fetch(`http://localhost:3000/api/jobs?page=${page}&per_page=${per_page}`)
     .then((response) => response.json())
-    .then((data:Jobs[]) => {
-        console.log('Jobs fetched:', jobs.value);
-      return data;
+    .then((data:Promise<Jobs[]>) => {
+        return data.then(res=>res); 
     })
-    .catch((error) => console.error('Error fetching jobs:', error));
-})
+    .catch((error) => [] as Jobs[]);
+    return res;
+} 
+

@@ -1,6 +1,21 @@
 <script setup lang="ts">
 import OriensButton from '@/components/button/OriensButton.vue';
+import { Jobs } from '@/composables/jobs';
 import { IconField, InputIcon, InputText } from 'primevue';
+import { computed, onMounted, ref } from 'vue';
+import GroupCardJob from '@/components/GroupCardJob.vue';
+
+const page = ref(1);
+const perPage = ref(16);
+const jobs = computed(async ():Promise<Jobs[]> => {
+    return await fetch(`http://localhost:3000/api/jobs?page=1&per_page=16`)
+        .then((response) => response.json())
+        .then((data: Jobs[]) => {
+            return data;
+        })
+        .catch((error) => [] as Jobs[]);
+});
+
 </script>
 <template>
     <div class="flex flex-col gap-4 items-center justify-center ">
@@ -31,10 +46,9 @@ import { IconField, InputIcon, InputText } from 'primevue';
             <InputText placeholder="Search" />
         </IconField>
     </div>
-    <div class="grid grid-cols-4 gap-4 m-5">
-        
-
+    <div>
+        <GroupCardJob class="grid grid-cols-4 gap-6 mr-40 ml-40 mb-5" :jobs=""></GroupCardJob>
     </div>
-    
+
 
 </template>

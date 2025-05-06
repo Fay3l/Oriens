@@ -1,3 +1,4 @@
+import { computed } from "vue";
 
 export class Jobs{
     identifiant: string;
@@ -12,3 +13,12 @@ export class Jobs{
     }
 }
 
+export const jobs = computed(() => { 
+    fetch('http://localhost:3000/api/jobs?page=1&per_page=4')
+    .then((response) => response.json())
+    .then((data:Jobs[]) => {
+        console.log('Jobs fetched:', jobs.value);
+      return data;
+    })
+    .catch((error) => console.error('Error fetching jobs:', error));
+})

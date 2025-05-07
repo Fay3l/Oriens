@@ -15,6 +15,7 @@
     "@primeuix/styles": "^1.0.0",
     "@primevue/forms": "^4.3.1",
     "@primevue/themes": "^4.2.5",
+    "@vueuse/core": "^13.1.0",
     "lib-jitsi-meet": "^1.0.6",
     "primeicons": "^7.0.0",
     "primevue": "^4.2.5",

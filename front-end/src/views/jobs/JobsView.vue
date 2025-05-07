@@ -3,19 +3,22 @@ import OriensButton from '@/components/button/OriensButton.vue';
 import { Jobs } from '@/composables/jobs';
 import { IconField, InputIcon, InputText } from 'primevue';
 import { computed, onMounted, ref } from 'vue';
+import { useFetch } from '@vueuse/core'
 import GroupCardJob from '@/components/GroupCardJob.vue';
 
 const page = ref(1);
 const perPage = ref(16);
-const jobs = computed(async ():Promise<Jobs[]> => {
-    return await fetch(`http://localhost:3000/api/jobs?page=1&per_page=16`)
+const url = ref(`http://localhost:3000/api/jobs?page=${page.value}&per_page=${perPage.value}`);
+
+const jobs = ref<Jobs[]>([]);
+onMounted(()=>{
+    fetch(url.value)
         .then((response) => response.json())
         .then((data: Jobs[]) => {
-            return data;
+            jobs.value = data;
         })
         .catch((error) => [] as Jobs[]);
-});
-
+})
 </script>
 <template>
     <div class="flex flex-col gap-4 items-center justify-center ">
@@ -45,9 +48,11 @@ const jobs = computed(async ():Promise<Jobs[]> => {
             </InputIcon>
             <InputText placeholder="Search" />
         </IconField>
+        <InputText v-model="page" placeholder="page" />
+        <InputText v-model="perPage" placeholder="per page" />
     </div>
     <div>
-        <GroupCardJob class="grid grid-cols-4 gap-6 mr-40 ml-40 mb-5" :jobs=""></GroupCardJob>
+        <GroupCardJob class="grid grid-cols-4 gap-6 mr-40 ml-40 mb-5" :jobs="jobs"></GroupCardJob>
     </div>
 
 

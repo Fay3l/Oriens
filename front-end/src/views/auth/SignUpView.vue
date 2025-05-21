@@ -96,7 +96,7 @@ const onGoogleSubmit = (e: any) => {
 <template>
     <div class="flex flex-row h-screen">
         <!-- Left Section -->
-        <div class="flex justify-center items-center w-1/2 bg-orange">
+        <div class="flex justify-center items-center w-[50%] bg-orange">
             <img src="../../images/welcome_oriens.svg" alt="Welcome Oriens" class="w-full h-full object-cover" />
         </div>
         <!-- Right Section -->
@@ -104,7 +104,7 @@ const onGoogleSubmit = (e: any) => {
             <div class="flex flex-col gap-2 ">
                 <h2 class="text-2xl font-bold">Rejoins-nous</h2>
                 <p>
-                    J'ai déjà un compte ? <a href="/login" class="text-orange font-bold">Je me connecte</a>
+                    J'ai déjà un compte. <a href="/auth/login" class="text-orange font-bold">Je me connecte</a>
                 </p>
             </div>
             <Form v-slot="$form" :initialValues="initialValues" :resolver="resolver" @submit="onFormSubmit"

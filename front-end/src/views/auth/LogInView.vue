@@ -22,19 +22,6 @@ const resolver = zodResolver(
             .email({ message: 'Invalid email address.' }),
         password: z
             .string()
-            .min(8, { message: 'Minimum 8 characters.' })
-            .refine((value: any) => /[a-z]/.test(value), {
-                message: 'Must have a lowercase letter.'
-            })
-            .refine((value: any) => /[A-Z]/.test(value), {
-                message: 'Must have an uppercase letter.'
-            })
-            .refine((value: any) => /\d/.test(value), {
-                message: 'Must have a number.'
-            })
-            .refine((value: any) => /[!;@#$%^&*(),.?":{}|<>]/.test(value), {
-                message: 'Must have a special character.'
-            })
     })
 );
 
@@ -69,26 +56,26 @@ const onGoogleSubmit = (e: any) => {
     <div class="flex items-center justify-center h-screen ">
         <Card>
             <template #title>
-                <img class="w-20 h-20 mx-auto" src="../../images/logo.svg" alt="Logo" />
-                <h2 class="text-center">Login</h2>
+                <img class="w-23 h-20 mx-auto" src="../../images/logo.svg" alt="Logo" />
+                <h2 class="text-center mt-2">Login</h2>
             </template>
             <template #content>
                 
-                <Form v-slot="$form" :initialValues :resolver @submit="handleLogin">
-                    <div class="flex flex-col m-2 ">
+                <Form v-slot="$form" :initialValues :resolver @submit="handleLogin" >
+                    <div class="flex flex-col gap-2 mt-4">
                         <label for="email" class="font-bold">Email</label>
                         <InputText v-model="initialValues.email" name="email" type="email" placeholder="Email" fluid />
                         <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
                             $form.email.error.message }}</Message>
                     </div>
-                    <div class="flex flex-col m-2">
+                    <div class="flex flex-col gap-2 mt-4">
                         <label for="password" class="font-bold">Mot de passe</label>
                         <Password v-model="initialValues.password" name="password" placeholder="Mot de passe"
                             :feedback="false" toggleMask fluid />
                         <Message v-if="$form.password?.invalid" severity="error" size="small" variant="simple">{{
                             $form.password.error.message }}</Message>
                     </div>
-                    <Button @click="onGoogleSubmit" severity="secondary"  class="w-full flex items-center justify-center gap-2">
+                    <Button @click="onGoogleSubmit" severity="secondary"  class="w-full flex items-center justify-center gap-2 mt-4">
                         <img src="../../images/Google_logo.svg" class="h-5 w-5" alt="Goolge Logo" />
                         <p>Se connecter avec Google</p>
                     </Button>

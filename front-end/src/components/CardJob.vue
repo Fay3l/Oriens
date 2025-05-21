@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Jobs } from '@/composables/jobs';
 import Card from 'primevue/card';
+import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
@@ -8,6 +9,7 @@ import { ref } from 'vue';
 const router = useRouter()
 const state = ref(false)
 const iconheart = ref('pi pi-heart')
+const dialogvisible = ref(false)
 const props = defineProps({
     job: {
         type: Jobs,
@@ -33,9 +35,7 @@ function truncateText(input: string, length: number): string {
 }
 
 function handleClick() {
-    router.push({
-        name:"login"
-    })
+    dialogvisible.value = true
 }
 function handleClick2() {
     state.value = !state.value
@@ -44,13 +44,16 @@ function handleClick2() {
 </script>
 
 <template>
-    
-        <Card class="border">
-            <template #content>
-                <div class="flex flex-col gap-4 items-center ">
+
+    <Card
+        class="border hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+        <template #content>
+            <div class="flex flex-col gap-4 items-center ">
+                <button @click="handleClick()">
                     <div>
                         <img class=" lg:w-29 sm:w-30 h-26 " alt="" src="./../images/jobs_card.svg">
                     </div>
+
                     <div class="flex flex-col items-center gap-1">
                         <div class="flex mb-2">
                             <p class="text-orange text-base font-bold ">{{ props.job.nom_metier }}</p>
@@ -62,11 +65,25 @@ function handleClick2() {
                             <p class="text-sm text-gray-600 ">{{ truncateText(stripHtmlTags(props.job.competences), 120)
                                 }}</p>
                         </div>
-                        <Button @click="handleClick2" :icon="iconheart" variant="text" class="!color-red" rounded aria-label="Favorite" />
                     </div>
-                </div>
-            </template>
-        </Card>
+                </button>
+                <Button @click="handleClick2" :icon="iconheart" variant="text" class="!bg-red" rounded
+                    aria-label="Favorite" />
+            </div>
+        </template>
+    </Card>
+    <Dialog v-model:visible="dialogvisible" modal :header="props.job.nom_metier" :style="{ width: '50rem' }"
+        :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+        <div class="flex flex-col gap-4 items-center ">
+            <div>
+                <img class=" lg:w-29 sm:w-30 h-26 " alt="" src="./../images/jobs_card.svg">
+            </div>
+            <div class="flex flex-col items-center gap-1">
+                <!-- Display competences without HTML tags -->
+                <p v-html="props.job.competences"></p>
+            </div>
+        </div>
+    </Dialog>
 </template>
 
 <style lang="css" scoped></style>

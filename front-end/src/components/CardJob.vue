@@ -7,7 +7,7 @@ import { ref } from 'vue';
 
 const router = useRouter()
 const state = ref(false)
-const color = ref('color-none')
+const iconheart = ref('pi pi-heart')
 const props = defineProps({
     job: {
         type: Jobs,
@@ -39,7 +39,7 @@ function handleClick() {
 }
 function handleClick2() {
     state.value = !state.value
-    color.value = state.value ? 'color-red' : 'color-none'
+    iconheart.value = state.value ? 'pi pi-heart-fill' : 'pi pi-heart'
 }
 </script>
 
@@ -48,9 +48,6 @@ function handleClick2() {
         <Card class="border">
             <template #content>
                 <div class="flex flex-col gap-4 items-center ">
-                    <button>
-
-                    </button>
                     <div>
                         <img class=" lg:w-29 sm:w-30 h-26 " alt="" src="./../images/jobs_card.svg">
                     </div>
@@ -65,7 +62,7 @@ function handleClick2() {
                             <p class="text-sm text-gray-600 ">{{ truncateText(stripHtmlTags(props.job.competences), 120)
                                 }}</p>
                         </div>
-                        <Button @click="handleClick2" icon="pi pi-heart" variant="text" rounded aria-label="Favorite" />
+                        <Button @click="handleClick2" :icon="iconheart" variant="text" class="!color-red" rounded aria-label="Favorite" />
                     </div>
                 </div>
             </template>

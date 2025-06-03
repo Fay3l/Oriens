@@ -1,15 +1,7 @@
 <script setup lang="ts">
 import GroupCardJob from '@/components/GroupCardJob.vue';
-import { onMounted,ref } from 'vue';
-import type { Jobs } from '@/composables/jobs';
 import OriensButton from '@/components/button/OriensButton.vue';
-import { useJobs } from '@/stores/useJobs';
 
-const jobsStore = useJobs();
-const jobs = ref<Jobs[]>([]);
-onMounted(() => {
-  jobsStore.getJobs(1,4)
-});
 </script>
 
 
@@ -55,7 +47,7 @@ onMounted(() => {
     <p class="">LES JEUNES DE 12 À 18 ANS</p>
   </div>
   <div>
-    <GroupCardJob class="grid grid-cols-4 gap-4 m-20" :jobs="jobsStore.collection"></GroupCardJob>
+    <GroupCardJob class="grid grid-cols-4 gap-4 m-20" :page="1" :perpage="4"></GroupCardJob>
   </div>
 </template>
 

@@ -2,24 +2,21 @@
 import OriensButton from '@/components/button/OriensButton.vue';
 import { Jobs } from '@/composables/jobs';
 import { IconField, InputIcon, InputText } from 'primevue';
-import { computed, onMounted, ref } from 'vue';
-import { useFetch } from '@vueuse/core'
+import { ref } from 'vue';
 import GroupCardJob from '@/components/GroupCardJob.vue';
 
 const page = ref(1);
 const perPage = ref(16);
-const url = ref(`http://localhost:3000/api/jobs?page=${page.value}&per_page=${perPage.value}`);
-
+const jobs = ref<Jobs[]>([]);
 const search = ref('');
 
 
 
 function searchJobs() {
-    console.log("Search: ",search.value);
+    console.log("Search: ", search.value);
     console.log(localStorage.getItem('token'))
-    console.log("Url: ",url.value);
-    fetch(`http://localhost:3000/api/jobs/search?search=${search.value}`,{
-        method:'GET',
+    fetch(`http://localhost:3000/api/jobs/search?search=${search.value}`, {
+        method: 'GET',
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem('token'),
         },
@@ -30,18 +27,11 @@ function searchJobs() {
         })
         .catch((error) => {
             console.log('Error fetching jobs:', error);
-            return [] as Jobs[]});
+            return [] as Jobs[]
+        });
 }
 
-const jobs = ref<Jobs[]>([]);
-onMounted(()=>{
-    fetch(url.value)
-        .then((response) => response.json())
-        .then((data: Jobs[]) => {
-            jobs.value = data;
-        })
-        .catch((error) => [] as Jobs[]);
-})
+
 </script>
 <template>
     <div class="flex flex-col gap-4 items-center justify-center mt-4 gap-2 ">
@@ -75,7 +65,7 @@ onMounted(()=>{
         <InputText v-model="perPage" placeholder="per page" />
     </div>
     <div>
-        <GroupCardJob class="grid grid-cols-4 gap-6 mr-40 ml-40 mb-5" :jobs="jobs"></GroupCardJob>
+        <GroupCardJob class="grid grid-cols-4 gap-6 mr-40 ml-40 mb-5" :page="page" :perpage="perPage"></GroupCardJob>
     </div>
 
 

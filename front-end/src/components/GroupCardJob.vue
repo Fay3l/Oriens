@@ -17,6 +17,10 @@ const props = defineProps({
         type: Number,
         default: 16
     },
+    jobs:{
+        type: Array as () => Jobs[],
+        default: () => []
+    }
 });
 onMounted(()=>{
     jobsStore.getJobs(props.page, props.perpage)
@@ -24,7 +28,14 @@ onMounted(()=>{
 </script>
 
 <template>
-    <div :class="props.class" >
+    <div v-if="props.jobs.length !== 0" :class="props.class">
+        <div v-for="job in props.jobs" :key="job.identifiant">
+            <div>
+                <CardJob :job="job" />
+            </div>
+        </div>
+    </div>
+    <div v-else :class="props.class" >
         <div v-for="job in jobsStore.collection" :key="job.identifiant">
             <div>
                 <CardJob :job="job" />

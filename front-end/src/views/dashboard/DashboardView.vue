@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Divider from 'primevue/divider';
 import OriensButton from '@/components/button/OriensButton.vue';
+import GroupCardJob from '@/components/GroupCardJob.vue';
 </script>
 
 <template>
@@ -16,16 +17,22 @@ import OriensButton from '@/components/button/OriensButton.vue';
         </div>
         <div>
             <div class=""></div>
-            <div class="grid grid-cols-2 gap-6 ">
+            <div class="grid grid-cols-3 gap-6">
                 <div class="bg-white border rounded-xl"></div>
-                <div>
-                    <div>
-                        <OriensButton label="Mes favoris" size="small"></OriensButton>
-                        <OriensButton label="Mes recommandations" size="small"></OriensButton>
+                <div class="col-span-2">
+                    <div class="flex flex-col gap-2">
+                        <div class="flex gap-2 items-center">
+                            <OriensButton label="Mes favoris" ></OriensButton>
+                            <OriensButton label="Mes recommandations"  color="white"></OriensButton>
+                        </div>
+                        <div >
+                            <GroupCardJob :page="1" :perpage="3" class="grid grid-cols-3 gap-4 items-center justify-center"></GroupCardJob>
+                        </div>
                     </div>
-
                 </div>
-
+            </div>
+            <div class="mt-10 flex justify-center">
+                <p class="font-bold text-xl">Mes rendez-vous orientation</p>
             </div>
         </div>
     </div>

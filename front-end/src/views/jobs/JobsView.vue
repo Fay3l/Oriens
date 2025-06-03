@@ -59,13 +59,13 @@ function searchJobs() {
             <InputIcon>
                 <i class="pi pi-search" />
             </InputIcon>
-            <InputText v-model="search" @keydown="searchJobs()" placeholder="Search" />
+            <InputText v-model="search" @change="searchJobs()" placeholder="Search" />
         </IconField>
         <InputText v-model="page" placeholder="page" />
         <InputText v-model="perPage" placeholder="per page" />
     </div>
     <div>
-        <GroupCardJob class="grid grid-cols-4 gap-6 mr-40 ml-40 mb-5" :page="page" :perpage="perPage"></GroupCardJob>
+        <GroupCardJob class="grid grid-cols-4 gap-6 mr-40 ml-40 mb-5" :page="page" :jobs="jobs" :perpage="perPage"></GroupCardJob>
     </div>
 
 

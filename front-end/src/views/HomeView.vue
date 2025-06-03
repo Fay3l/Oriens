@@ -3,16 +3,12 @@ import GroupCardJob from '@/components/GroupCardJob.vue';
 import { onMounted,ref } from 'vue';
 import type { Jobs } from '@/composables/jobs';
 import OriensButton from '@/components/button/OriensButton.vue';
+import { useJobs } from '@/stores/useJobs';
 
+const jobsStore = useJobs();
 const jobs = ref<Jobs[]>([]);
 onMounted(() => {
-  fetch('http://localhost:3000/api/jobs?page=1&per_page=4')
-    .then((response) => response.json())
-    .then((data) => {
-      jobs.value = data;
-      console.log('Jobs fetched:', jobs.value);
-    })
-    .catch((error) => console.error('Error fetching jobs:', error));
+  jobsStore.getJobs(1,4)
 });
 </script>
 
@@ -59,7 +55,7 @@ onMounted(() => {
     <p class="">LES JEUNES DE 12 À 18 ANS</p>
   </div>
   <div>
-    <GroupCardJob class="grid grid-cols-4 gap-4 m-20" :jobs="jobs"></GroupCardJob>
+    <GroupCardJob class="grid grid-cols-4 gap-4 m-20" :jobs="jobsStore.collection"></GroupCardJob>
   </div>
 </template>
 

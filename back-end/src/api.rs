@@ -118,7 +118,7 @@ async fn login_user(State(state):State<AppState>,Json(payload): Json<UserLogin>)
                         };
                         add_experience(&mut u, 10);
                         let token = create_jwt(user_id.id).unwrap();
-                        return Json(json!({"token": token}))
+                        return Json(json!({"token": token, "id":user_id.id}))
                     }
                     Err(e) => return Json(json!({"message": format!("{:?}",e)  , "code":StatusCode::INTERNAL_SERVER_ERROR.as_u16()})),
                 }
@@ -257,7 +257,7 @@ async fn handle_google_callback(
     if state.db.exist_user(email).await?  {
         let user_id = state.db.get_user_id(email).await?;
         let token = create_jwt(user_id.id)?;
-        return Ok(Json(json!({ "token": token })));
+        return Ok(Json(json!({ "token": token, "id": user_id.id })));
     }
     // Create a new user
     let new_user = User {
@@ -281,5 +281,5 @@ async fn handle_google_callback(
 
     // Retourner un token JWT
     let token = create_jwt(id)?;
-    Ok(Json(json!({ "token": token })))
+    Ok(Json(json!({ "token": token, "id":id })))
 }

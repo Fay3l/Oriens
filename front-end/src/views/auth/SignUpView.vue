@@ -10,11 +10,15 @@ import Password from 'primevue/password';
 import { VueSimplePhone, type ParsedPhoneNumber } from 'vue-simple-phone'
 import 'vue-simple-phone/themes/light.css' 
 import OriensButton from '@/components/button/OriensButton.vue';
+import { UserRegister } from '@/composables/auth';
+import { useAuth } from '@/stores/useAuth';
 
+
+const authStore = useAuth();
 const number_phone = ref(<ParsedPhoneNumber | undefined>undefined);
 
 
-const initialValues = ref({
+const initialValues = ref<UserRegister>({
     firstname: '',
     lastname: '',
     email: '',
@@ -65,25 +69,6 @@ const resolver = zodResolver(
     })
 );
 
-const onFormSubmit = (e: any) => {
-    initialValues.value.number_phone = number_phone.value?.number?.e164 || ''
-    console.log(initialValues.value);
-    fetch('/api/register', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(initialValues.value)
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-
-};
 const onGoogleSubmit = (e: any) => {
     console.log(initialValues.value);
     nextTick(() => {
@@ -107,7 +92,7 @@ const onGoogleSubmit = (e: any) => {
                     J'ai déjà un compte. <a href="/auth/login" class="text-orange font-bold">Je me connecte</a>
                 </p>
             </div>
-            <Form v-slot="$form" :initialValues="initialValues" :resolver="resolver" @submit="onFormSubmit"
+            <Form v-slot="$form" :initialValues="initialValues" :resolver="resolver" @submit="authStore.register(initialValues)"
                 class="grid grid-cols-2 gap-5 w-full max-w-lg">
                 <div class="flex flex-col gap-1">
                     <label for="firstname" class="font-bold">Prénom</label>

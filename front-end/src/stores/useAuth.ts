@@ -33,12 +33,13 @@ export const useAuth = defineStore("useAuth", {
 
         async register(registerdata: UserRegister): Promise<boolean> {
             try {
+                console.log("Registering user:", registerdata);
                 const response = await fetch("/api/register", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ registerdata }),
+                    body: JSON.stringify(registerdata),
                 });
 
                 if (!response.ok) {

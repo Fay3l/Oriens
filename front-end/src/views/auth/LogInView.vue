@@ -8,6 +8,9 @@ import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import Card from 'primevue/card';
 import OriensButton from '@/components/button/OriensButton.vue';
+import { useAuth } from '@/stores/useAuth';
+
+const authStore = useAuth();
 const initialValues = ref({
     email: '',
     firstname: '',

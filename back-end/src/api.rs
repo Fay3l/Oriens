@@ -129,6 +129,7 @@ async fn login_user(State(state):State<AppState>,Json(payload): Json<UserLogin>)
         }
         Err(e) => return Json(json!({"message": format!("{:?}",e)  , "code":StatusCode::INTERNAL_SERVER_ERROR.as_u16()})),
     }
+    
     // match verify_user(&payload.username, &payload.password) {
     //     Ok(true) => {
     //         let mut user = match load_user(&payload.username) {

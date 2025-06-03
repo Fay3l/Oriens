@@ -12,5 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     role VARCHAR(255) NOT NULL,
     experience INTEGER DEFAULT 0 NOT NULL,
-    badges JSONB DEFAULT '[]' NOT NULL
+    badges JSONB DEFAULT '[]' NOT NULL,
+    favorites_jobs VARCHAR(10),
+    CONSTRAINT fk_jobs FOREIGN KEY(favorites_jobs) REFERENCES jobs(id)
 );

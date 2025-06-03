@@ -5,6 +5,7 @@ import SignUpView from '@/views/auth/SignUpView.vue'
 import LogInView from '@/views/auth/LogInView.vue'
 import CallVideoView from '@/views/CallVideoView.vue'
 import TheLayoutView from '@/views/layout/TheLayoutView.vue'
+import DashboardView from '@/views/dashboard/DashboardView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,6 +24,12 @@ const router = createRouter({
           path: '/jobs',
           name: 'jobs',
           component: () => import('@/views/jobs/JobsView.vue'),
+        },
+        {
+          path: '/dashboard',
+          name: 'dashboard',
+          component: DashboardView,
+          meta: { requiresAuth: true }, // This route requires authentication
         }
       ]
     },

@@ -14,6 +14,26 @@ impl DB {
         Ok(Self {db})
     }
 
+    pub async fn store_password_reset_token(
+        &self,
+        user_id: &Uuid,
+        hashed_token: &str,
+        expiry: i64,
+    ) -> Result<(), sqlx::Error> {
+        sqlx::query!(
+            r#"
+            INSERT INTO password_reset_tokens (user_id, token, token_expiry)
+            VALUES ($1, $2, $3)
+            ON CONFLICT (user_id, token) DO UPDATE SET token_expiry = $3
+            "#,
+            user_id,
+            hashed_token,
+            expiry
+        )
+        .execute(&self.db)
+        .await?;
+        Ok(())
+    }
 
     pub async fn create_user(&self, user: &User) -> Result<Uuid, sqlx::Error> {
         match self.exist_user(&user.email).await {

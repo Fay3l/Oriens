@@ -2,6 +2,13 @@
 import Divider from 'primevue/divider';
 import OriensButton from '@/components/button/OriensButton.vue';
 import GroupCardJob from '@/components/GroupCardJob.vue';
+import { ref } from 'vue';
+
+const page = ref('');
+const handlePageChange = (newPage: string) => {
+    page.value = newPage;
+    console.log(page.value);
+};
 </script>
 
 <template>
@@ -9,9 +16,9 @@ import GroupCardJob from '@/components/GroupCardJob.vue';
         <div>
             <div class="mb-10 text-3xl font-bold">Mon espace Oriens</div>
             <div class="flex items-center  gap-4">
-                <button>Vue d'ensemble</button>
-                <button>Mon profil</button>
-                <button>Mes favoris</button>
+                <button @click="handlePageChange('Vue d)" class="p-2 hover:shadow-lg rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">Vue d'ensemble</button>
+                <button class="p-2 hover:shadow-lg rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">Mon profil</button>
+                <button class="p-2 hover:shadow-lg rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">Mes favoris</button>
             </div>
             <Divider></Divider>
         </div>

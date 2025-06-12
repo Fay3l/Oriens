@@ -13,6 +13,16 @@ pub struct GoogleAuth {
     pub redirect_uris:Vec<String>,
 }
 
+#[derive(Deserialize)]
+pub struct ResetPasswordRequest {
+    pub token: String,
+    pub new_password: String,
+}
+
+#[derive(Deserialize)]
+pub struct ForgotPasswordRequest {
+    pub email: String,
+}
 #[derive(Serialize, Deserialize,Clone, Debug)]
 pub struct User {
     pub username: String,

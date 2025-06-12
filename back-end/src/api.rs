@@ -1,6 +1,6 @@
 use crate::{
     add_experience, create_jwt,  jobs_search, models::{
-        AppState, Claims, Job, JobsPagination, MetiersPossibles, OAuthCallback, SearchQuery, Section, User, UserLogin
+        AppState, Claims, ForgotPasswordRequest, Job, JobsPagination, MetiersPossibles, OAuthCallback, SearchQuery, Section, User, UserLogin
     }, questionnaire_result
 };
 use axum::{
@@ -166,7 +166,42 @@ async fn register_user(State(state):State<AppState>,Json(payload): Json<User>) -
     let _ = state.db.create_user(&payload).await?;
     Ok(Json(json!({"message": "User registered successfully"})))
 }
+#[axum::debug_handler]
+async fn forgot_password_handler(
+    State(state): State<AppState>,
+    Json(payload): Json<ForgotPasswordRequest>,
+) -> Result<Json<serde_json::Value>> {
+    // Toujours répondre pareil pour éviter l'énumération d'emails
+    let msg = "Si cet email existe, un lien de réinitialisation a été envoyé.";
 
+    // Vérifier si l'utilisateur existe
+    let user = state.db.get_user_id(&payload.email).await?;
+    if user.id == uuid::Uuid::nil() {
+        return Ok(Json(json!({ "message": msg })));
+    }
+
+    // Générer un token sécurisé
+    let mut token_bytes = [0u8; 64];
+    rand::thread_rng().fill_bytes(&mut token_bytes);
+    let token = base64::encode(token_bytes);
+
+    // Hasher le token
+    let mut hasher = Sha256::new();
+    hasher.update(&token);
+    let hashed_token = format!("{:x}", hasher.finalize());
+
+    // Expiration dans 1h
+    let expiry = Utc::now().timestamp() + 3600;
+
+    // Stocker en base
+    state.db.store_password_reset_token(&user.id, &hashed_token, expiry).await?;
+
+    // Envoyer le lien par email (à implémenter)
+    // let reset_link = format!("https://example.com/reset-password?token={}", token);
+    // send_email(payload.email, reset_link).await?;
+
+    Ok(Json(json!({ "message": msg })))
+}
 async fn jobssearch_handler(Query(search): Query<SearchQuery>) -> Result<Json<Vec<Job>>> {
     let res = jobs_search(&search.search).await?;
     Ok(Json(res))

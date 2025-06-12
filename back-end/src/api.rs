@@ -11,9 +11,14 @@ use axum::{
     routing::{get, post},
     Json, Router,
 };
+use base64::Engine;
 use bcrypt::{hash, DEFAULT_COST};
+use chrono::Utc;
 use jsonwebtoken::{decode, DecodingKey, Validation};
+use rand::RngCore;
 use serde_json::json;
+use sha2::{Digest, Sha256};
+
 
 pub fn api_routes() -> Router<AppState> {
     Router::new()
@@ -182,9 +187,8 @@ async fn forgot_password_handler(
 
     // Générer un token sécurisé
     let mut token_bytes = [0u8; 64];
-    rand::thread_rng().fill_bytes(&mut token_bytes);
-    let token = base64::encode(token_bytes);
-
+    rand::rng().fill_bytes(&mut token_bytes);
+    let token = base64::engine::general_purpose::STANDARD.encode(token_bytes);
     // Hasher le token
     let mut hasher = Sha256::new();
     hasher.update(&token);

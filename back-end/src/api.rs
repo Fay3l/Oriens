@@ -1,8 +1,7 @@
 use crate::{
     add_experience, create_jwt, jobs_search,
     models::{
-        AppState, Claims, ForgotPasswordRequest, Job, JobsPagination, MetiersPossibles,
-        OAuthCallback, SearchQuery, Section, User, UserLogin,
+        AppState, Claims, ForgotPasswordRequest, Job, JobsPagination, MetiersPossibles, OAuthCallback, ResetPasswordRequest, SearchQuery, Section, User, UserLogin
     },
     questionnaire_result,
 };
@@ -258,6 +257,35 @@ async fn forgot_password_handler(
 
     Ok(Json(json!({ "message": msg })))
 }
+
+async fn reset_password_handler(
+    State(state): State<AppState>,
+    Json(payload): Json<ResetPasswordRequest>,
+) -> Result<Json<serde_json::Value>> {
+    // Hasher le token reçu
+    let mut hasher = Sha256::new();
+    hasher.update(&payload.token);
+    let hashed_token = format!("{:x}", hasher.finalize());
+
+    // Chercher le token en base
+    if let Some(row) = state.db.get_password_reset_token(&hashed_token).await? {
+        if row.token_expiry < Utc::now().timestamp() {
+            return Ok(Json(json!({"error": "Token expiré"})));
+        }
+
+        // Supprimer tous les tokens de ce user
+        state.db.delete_all_password_reset_tokens(&row.user_id).await?;
+
+        // Mettre à jour le mot de passe
+        let hashed_pw = hash(&payload.new_password, DEFAULT_COST)?;
+        state.db.update_user_password(row.user_id, &hashed_pw).await?;
+
+        return Ok(Json(json!({"message": "Mot de passe réinitialisé"})));
+    }
+
+    Ok(Json(json!({"error": "Token invalide"})))
+}
+
 async fn jobssearch_handler(Query(search): Query<SearchQuery>) -> Result<Json<Vec<Job>>> {
     let res = jobs_search(&search.search).await?;
     Ok(Json(res))

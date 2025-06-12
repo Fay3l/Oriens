@@ -19,6 +19,12 @@ pub struct ResetPasswordRequest {
     pub new_password: String,
 }
 
+pub struct PasswordResetToken {
+    pub user_id: uuid::Uuid,
+    pub token: String,
+    pub token_expiry: i64,
+}
+
 #[derive(Deserialize)]
 pub struct ForgotPasswordRequest {
     pub email: String,

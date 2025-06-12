@@ -1,7 +1,7 @@
 use sqlx::postgres::{PgPool, PgPoolOptions};
 use bcrypt::{hash, verify, DEFAULT_COST};
 use uuid::Uuid;
-use crate::models::{GetUser, GetUserId, User};
+use crate::models::{GetUser, GetUserId, PasswordResetToken, User};
 
 #[derive(Debug,Clone)]
 pub struct DB{
@@ -33,6 +33,25 @@ impl DB {
         .execute(&self.db)
         .await?;
         Ok(())
+    }
+
+     pub async fn get_password_reset_token(&self, hashed_token: &str) -> Result<Option<PasswordResetToken>, sqlx::Error> {
+        let row = sqlx::query!(
+            r#"
+            SELECT user_id, token, token_expiry
+            FROM password_reset_tokens
+            WHERE token = $1
+            "#,
+            hashed_token
+        )
+        .fetch_optional(&self.db)
+        .await?;
+
+        Ok(row.map(|r| PasswordResetToken {
+            user_id: r.user_id,
+            token: r.token,
+            token_expiry: r.token_expiry,
+        }))
     }
 
     pub async fn create_user(&self, user: &User) -> Result<Uuid, sqlx::Error> {

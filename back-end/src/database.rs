@@ -98,6 +98,31 @@ impl DB {
         
     }
 
+    pub async fn delete_all_password_reset_tokens(&self, user_id: &Uuid) -> Result<(), sqlx::Error> {
+        sqlx::query!(
+            r#"
+            DELETE FROM password_reset_tokens WHERE user_id = $1
+            "#,
+            user_id
+        )
+        .execute(&self.db)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn update_user_password(&self, user_id: Uuid, new_hashed_password: &str) -> Result<(), sqlx::Error> {
+        sqlx::query!(
+            r#"
+            UPDATE users SET password = $1 WHERE id = $2
+            "#,
+            new_hashed_password,
+            user_id
+        )
+        .execute(&self.db)
+        .await?;
+        Ok(())
+    }
+
     pub async fn verify_user(&self, lastname: &str, email:&str, password: &str) -> Result<GetUserId, sqlx::Error> {
         let user = sqlx::query!(
             r#"

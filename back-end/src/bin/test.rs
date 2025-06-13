@@ -6,12 +6,6 @@
 // };
 // use serde::{Deserialize, Serialize};
 
-use lettre::{transport::smtp::authentication::Credentials, Message, SmtpTransport, Transport};
-use mistralai_client::v1::{
-    chat::{ChatMessage, ChatMessageRole, ChatParams, ResponseFormat},
-    client::Client,
-    constants::Model,
-};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]

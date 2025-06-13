@@ -39,6 +39,8 @@ pub fn api_routes() -> Router<AppState> {
         )
         .route("/api/auth/google", get(start_google_auth))
         .route("/api/auth/google/callback", get(handle_google_callback))
+        .route("/api/forgot-password", post(forgot_password_handler))
+        .route("/api/reset-password", post(reset_password_handler))
 }
 
 pub type Result<T> = std::result::Result<T, AppError>;
@@ -225,7 +227,7 @@ async fn forgot_password_handler(
         .db
         .store_password_reset_token(&user.id, &hashed_token, expiry)
         .await?;
-    let reset_link = format!("https://tonsite.com/reset-password?token={}", token);
+    let reset_link = format!("http://localhost:3000/reset-password?token={}", token);
 
     // Prépare le message
     let email = Message::builder()

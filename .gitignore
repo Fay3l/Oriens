@@ -1,4 +1,5 @@
 /back-end/target
+/back-end/.sqlx
 script.sql
 Onisep*
 .env

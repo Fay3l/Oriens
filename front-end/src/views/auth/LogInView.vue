@@ -9,9 +9,10 @@ import Password from 'primevue/password';
 import Card from 'primevue/card';
 import OriensButton from '@/components/button/OriensButton.vue';
 import { useAuth } from '@/stores/useAuth';
+import { UserLogin } from '@/composables/auth';
 
 const authStore = useAuth();
-const initialValues = ref({
+const initialValues = ref<UserLogin>({
     email: '',
     firstname: '',
     lastname: '',
@@ -65,7 +66,7 @@ const onGoogleSubmit = (e: any) => {
             </template>
             <template #content>
                 
-                <Form v-slot="$form" :initialValues :resolver @submit="handleLogin" >
+                <Form v-slot="$form" :initialValues :resolver @submit="authStore.login(initialValues)" >
                     <div class="flex flex-col gap-2 mt-4">
                         <label for="email" class="font-bold">Email</label>
                         <InputText v-model="initialValues.email" name="email" type="email" placeholder="Email" fluid />

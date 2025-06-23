@@ -1,4 +1,4 @@
-import type { UserRegister } from "@/composables/auth";
+import type { UserLogin, UserRegister } from "@/composables/auth";
 import router from "@/router";
 import { defineStore } from "pinia";
 
@@ -9,14 +9,14 @@ export const useAuth = defineStore("useAuth", {
         user: '',
     }),
     actions: {
-        async login(username: string, password: string): Promise<boolean> {
+        async login(userlogin:UserLogin): Promise<boolean> {
             try {
                 const response = await fetch("/api/login", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ username, password }),
+                    body: JSON.stringify(userlogin),
                 });
 
                 if (!response.ok) {

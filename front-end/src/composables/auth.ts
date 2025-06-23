@@ -36,11 +36,15 @@ export class UserRegister{
     }
 }
 export class UserLogin {
-    username: string;
+    firstname: string;
+    lastname: string;
+    email: string;
     password: string;
 
-    constructor(username: string, password: string) {
-        this.username = username;
+    constructor(email: string, password: string,firstname: string, lastname: string) {
+        this.email = email;
         this.password = password;
+        this.firstname = firstname;
+        this.lastname = lastname;
     }
 }

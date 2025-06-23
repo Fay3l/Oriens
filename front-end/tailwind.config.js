@@ -20,6 +20,15 @@ export default {
         bluedark:'#15285C',
         blue:'#2F4B98',
         lightdark:'#1D1D1D',
+      },
+      animation: {
+        'infinite-scroll': 'infinite-scroll 25s linear infinite',
+      },
+      keyframes: {
+        'infinite-scroll': {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(-100%)' },
+        }
       }
     },
   },

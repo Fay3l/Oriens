@@ -6,6 +6,7 @@ import LogInView from '@/views/auth/LogInView.vue'
 import CallVideoView from '@/views/CallVideoView.vue'
 import TheLayoutView from '@/views/layout/TheLayoutView.vue'
 import DashboardView from '@/views/dashboard/DashboardView.vue'
+import StartQuiz from '@/views/survey/StartQuiz.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,27 +15,36 @@ const router = createRouter({
       path: '/',
       name: 'layout',
       component: TheLayoutView,
+      meta: { requiresAuth: true },
       children: [
         {
           path: '',
           name: 'home',
           component: HomeView,
+          meta: { requiresAuth: true },
         },
         {
           path: '/jobs',
           name: 'jobs',
           component: () => import('@/views/jobs/JobsView.vue'),
+          meta: { requiresAuth: true },
         },
         {
           path: '/dashboard',
           name: 'dashboard',
           component: DashboardView,
           meta: { requiresAuth: true }, // This route requires authentication
+        },
+        {
+          path: '/start-quiz',
+          name: 'start-quiz',
+          component: StartQuiz,
+          meta: { requiresAuth: true },
         }
       ]
     },
     {
-      path:'/call',
+      path: '/call',
       name: 'call',
       component: CallVideoView
     },
@@ -50,7 +60,7 @@ const router = createRouter({
         {
           name: 'login',
           path: 'login',
-          component: LogInView ,
+          component: LogInView,
         }
       ]
     },
@@ -62,8 +72,9 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'),
     },
+
     {
-      path:'/survey',
+      path: '/survey',
       name: 'survey',
       component: Questionnaire,
     }
@@ -73,8 +84,10 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth) {
     const token = localStorage.getItem('token');
-    if (token) {
+    console.log('Token:', token); // Debugging line to check token value
+    if (token !== undefined && token !== null) {
       // User is authenticated, proceed to the route
+      console.log('User is authenticated, proceeding to:', to.name); // Debugging line
       next();
     } else {
       // User is not authenticated, redirect to login

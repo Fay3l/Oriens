@@ -6,12 +6,7 @@ use crate::{
     questionnaire_result,
 };
 use axum::{
-    extract::{Query, Request, State},
-    http::StatusCode,
-    middleware::{from_fn, Next},
-    response::{Html, IntoResponse, Redirect, Response},
-    routing::{get, post},
-    Json, Router,
+    debug_handler, extract::{Query, Request, State}, http::StatusCode, middleware::{from_fn, Next}, response::{Html, IntoResponse, Redirect, Response}, routing::{get, post}, Form, Json, Router
 };
 use base64::Engine;
 use bcrypt::{hash, DEFAULT_COST};
@@ -19,6 +14,7 @@ use chrono::Utc;
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use lettre::{transport::smtp::authentication::Credentials, Message, SmtpTransport, Transport};
 use rand::RngCore;
+use serde::Deserialize;
 use serde_json::json;
 use sha2::{Digest, Sha256};
 
@@ -40,7 +36,7 @@ pub fn api_routes() -> Router<AppState> {
         .route("/api/auth/google", get(start_google_auth))
         .route("/api/auth/google/callback", get(handle_google_callback))
         .route("/api/forgot-password", post(forgot_password_handler))
-        .route("/api/reset-password", post(reset_password_handler))
+        .route("/api/reset-password/{token}", get(show_form_reset_password).post(reset_password_handler))
 }
 
 pub type Result<T> = std::result::Result<T, AppError>;
@@ -260,13 +256,30 @@ async fn forgot_password_handler(
     Ok(Json(json!({ "message": msg })))
 }
 
+#[derive(Deserialize, Debug)]
+#[allow(dead_code)]
+struct Input {
+    password: String
+}
+
+async fn show_form_reset_password() -> Html<&'static str> {
+    Html(
+        "<h1>Réinitialisation du mot de passe</h1>
+        <form action=\"/api/reset-password\" method=\"post\">
+            <input type=\"text\" name=\"token\" placeholder=\"Token\" required>
+            <input type=\"password\" name=\"new_password\" placeholder=\"Nouveau mot de passe\" required>
+            <button type=\"submit\">Réinitialiser</button>
+        </form>",
+    )
+}
+#[debug_handler]
 async fn reset_password_handler(
     State(state): State<AppState>,
-    Json(payload): Json<ResetPasswordRequest>,
+    Form(form): Form<ResetPasswordRequest>,
 ) -> Result<Json<serde_json::Value>> {
     // Hasher le token reçu
     let mut hasher = Sha256::new();
-    hasher.update(&payload.token);
+    hasher.update(&form.token);
     let hashed_token = format!("{:x}", hasher.finalize());
 
     // Chercher le token en base
@@ -279,7 +292,7 @@ async fn reset_password_handler(
         state.db.delete_all_password_reset_tokens(&row.user_id).await?;
 
         // Mettre à jour le mot de passe
-        let hashed_pw = hash(&payload.new_password, DEFAULT_COST)?;
+        let hashed_pw = hash(&form.new_password, DEFAULT_COST)?;
         state.db.update_user_password(row.user_id, &hashed_pw).await?;
 
         return Ok(Json(json!({"message": "Mot de passe réinitialisé"})));

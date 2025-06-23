@@ -16,7 +16,7 @@ const handlePageChange = (newPage: string) => {
         <div>
             <div class="mb-10 text-3xl font-bold">Mon espace Oriens</div>
             <div class="flex items-center  gap-4">
-                <button @click="handlePageChange('Vue d)" class="p-2 hover:shadow-lg rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">Vue d'ensemble</button>
+                <button @click="handlePageChange('Vue d')" class="p-2 hover:shadow-lg rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">Vue d'ensemble</button>
                 <button class="p-2 hover:shadow-lg rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">Mon profil</button>
                 <button class="p-2 hover:shadow-lg rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">Mes favoris</button>
             </div>

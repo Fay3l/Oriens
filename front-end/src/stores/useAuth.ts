@@ -1,4 +1,5 @@
 import type { UserRegister } from "@/composables/auth";
+import router from "@/router";
 import { defineStore } from "pinia";
 
 export const useAuth = defineStore("useAuth", {
@@ -24,6 +25,7 @@ export const useAuth = defineStore("useAuth", {
 
                 const data = await response.json();
                 localStorage.setItem("token", data.token);
+                router.push({ name: "dashboard" });
                 return true;
             } catch (error) {
                 console.error("Login error:", error);
@@ -48,6 +50,7 @@ export const useAuth = defineStore("useAuth", {
 
                 const data = await response.json();
                 localStorage.setItem("token", data.token);
+                router.push({ name: "login" });
                 return true;
             } catch (error) {
                 console.error("Registration error:", error);

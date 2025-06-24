@@ -32,7 +32,7 @@ import router from '@/router';
                         <p>Vehicula massa in enim luctus. Rutrum arcu.</p>
                     </div>
                     <div class="text-base" >
-                        <OriensButton label="FAIRE MON TEST D'ORIENTATION" @click="router.push({name:'login'})"></OriensButton>
+                        <OriensButton label="FAIRE MON TEST D'ORIENTATION" @click="router.push({name:'signup'})"></OriensButton>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,85 @@
+<template>
+  <div class="flex flex-col items-center justify-center min-h-screen bg-[#FFFCFA] relative overflow-hidden">
+    <!-- Décorations de fond -->
+    <div class="absolute left-0 top-0 w-1/2 h-full opacity-10 select-none pointer-events-none">
+      <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+        <path d="M200 350 Q100 200 200 50 Q300 200 200 350 Z" fill="#EE7213" />
+      </svg>
+    </div>
+    <div class="absolute right-0 top-0 w-1/2 h-full opacity-10 select-none pointer-events-none">
+      <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+        <circle cx="320" cy="320" r="80" fill="#EE7213" />
+      </svg>
+    </div>
+    <!-- Contenu principal -->
+    <div class="z-10 flex flex-col items-center w-full">
+      <h1 class="text-3xl md:text-4xl font-bold text-center leading-tight text-black mb-2">
+        Quiz orientation <span class="block font-handwriting text-[#EE7213] text-2xl md:text-3xl mt-1">terminé</span>
+      </h1>
+      <div class="mt-2 text-center text-gray-500 text-xs md:text-sm mb-6">
+        Bravo, vous avez répondu aux questions !
+      </div>
+      <div v-if="loading" class="text-orange-500 font-semibold my-8">Analyse de vos réponses...</div>
+      <div v-else-if="error" class="text-red-500 font-semibold my-8">{{ error }}</div>
+      <div v-else-if="metiers && metiers.length" class="w-full max-w-2xl mt-6">
+        <h2 class="text-xl font-bold text-center mb-4">Métiers qui pourraient vous correspondre :</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div v-for="(m, idx) in metiers" :key="idx" class="bg-white rounded-xl shadow p-6 flex flex-col gap-2">
+            <div class="font-bold text-base text-[#EE7213]">{{ m.nom_metier }}</div>
+            <div class="text-xs text-gray-600">{{ m.description }}</div>
+          </div>
+        </div>
+      </div>
+      <button v-if="!loading" class="mt-8 px-8 py-3 bg-gradient-to-r from-[#EE7213] to-[#F09A4E] text-white rounded-lg text-base font-semibold shadow hover:brightness-110 transition-all">
+        Découvrir mon profil
+      </button>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+interface Metier {
+  nom_metier: string;
+  description: string;
+}
+
+const metiers = ref<Metier[]>([]);
+const loading = ref(true);
+const error = ref('');
+
+// On suppose que les réponses du questionnaire sont stockées dans le localStorage ou dans un store global
+// const storedData = localStorage.getItem('questionnaireData');
+const token = localStorage.getItem('token'); // Si un token est nécessaire pour l'authentification
+
+
+onMounted(async () => {
+  const questionnaireData = localStorage.getItem('questionnaireData');
+  loading.value = true;
+  error.value = '';
+  try {
+    console.log('Envoi des données du questionnaire :', questionnaireData);
+    const response = await fetch('/api/survey/result', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify(questionnaireData)
+    });
+    if (!response.ok) throw new Error('Erreur lors de la récupération des résultats');
+    const data = await response.json();
+    metiers.value = data.metiers_possibles || [];
+  } catch (e) {
+    if (e instanceof Error) {
+      error.value = e.message;
+    } else {
+      error.value = 'Erreur inconnue';
+    }
+  } finally {
+    loading.value = false;
+  }
+});
+</script>

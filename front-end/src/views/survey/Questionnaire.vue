@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { questionnaire } from '../composables/questionnaire';
+import { questionnaire } from '../../composables/questionnaire';
+import { useRouter } from 'vue-router';
 const currentSection = ref(0);
 const sections = questionnaire.value.sections;
 const selectedOption = ref('');
-
+const router = useRouter();
 function selectOption(option: string) {
     selectedOption.value = option;
     // Tu peux stocker la réponse dans le modèle ici si besoin
@@ -18,6 +19,11 @@ function nextSection() {
         // Fin du quiz, soumission ou navigation
     }
 }
+const finishQuiz = () => {
+    console.log('Quiz terminé, réponses :', JSON.stringify(questionnaire.value));
+    localStorage.setItem('quizResult', JSON.stringify(questionnaire.value)); // ou answers.value si tu veux juste les réponses
+    router.push({ name: 'result-quiz' });
+};
 </script>
 
 <template>
@@ -95,7 +101,7 @@ function nextSection() {
                 <div v-if="currentSection == sections.length - 1">
                     <button
                         class="w-full py-3 rounded-lg bg-[#F6CBA3] text-[#A97A50] font-semibold text-base mt-2 transition-all hover:brightness-105"
-                        @click="nextSection">
+                        @click="finishQuiz">
                         Terminer le quiz
                     </button>
                 </div>

@@ -48,3 +48,11 @@ export class UserLogin {
         this.lastname = lastname;
     }
 }
+
+export class ForgotPassword {
+    email: string;
+
+    constructor(email: string) {
+        this.email = email;
+    }
+}   

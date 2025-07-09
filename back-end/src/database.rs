@@ -121,7 +121,7 @@ impl DB {
         .execute(&self.db)
         .await?;
         Ok(())
-    }
+    }   
 
     pub async fn verify_user(&self, lastname: &str, email:&str, password: &str) -> Result<GetUserId, sqlx::Error> {
         let user = sqlx::query!(

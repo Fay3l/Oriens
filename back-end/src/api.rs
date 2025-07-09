@@ -6,7 +6,7 @@ use crate::{
     questionnaire_result,
 };
 use axum::{
-    debug_handler, extract::{Query, Request, State}, http::StatusCode, middleware::{from_fn, Next}, response::{Html, IntoResponse, Redirect, Response}, routing::{get, post}, Form, Json, Router
+    debug_handler, extract::{Path, Query, Request, State}, http::StatusCode, middleware::{from_fn, Next}, response::{Html, IntoResponse, Redirect, Response}, routing::{get, post}, Form, Json, Router
 };
 use base64::Engine;
 use bcrypt::{hash, DEFAULT_COST};
@@ -17,6 +17,8 @@ use rand::RngCore;
 use serde::Deserialize;
 use serde_json::json;
 use sha2::{Digest, Sha256};
+use urlencoding::encode;
+
 
 pub fn api_routes() -> Router<AppState> {
     Router::new()
@@ -36,7 +38,7 @@ pub fn api_routes() -> Router<AppState> {
         .route("/api/auth/google", get(start_google_auth))
         .route("/api/auth/google/callback", get(handle_google_callback))
         .route("/api/forgot-password", post(forgot_password_handler))
-        .route("/api/reset-password/{token}", get(show_form_reset_password).post(reset_password_handler))
+        .route("/api/reset-password", get(show_form_reset_password).post(reset_password_handler))
 }
 
 pub type Result<T> = std::result::Result<T, AppError>;
@@ -223,17 +225,22 @@ async fn forgot_password_handler(
         .db
         .store_password_reset_token(&user.id, &hashed_token, expiry)
         .await?;
-    let reset_link = format!("http://localhost:3000/reset-password?token={}", token);
+    let reset_link = format!("http://localhost:3000/api/reset-password?token={}", encode(&token));
 
+    let html_string = format!(
+        "<h1>Réinitialisation de votre mot de passe</h1>
+        <p>Pour réinitialiser votre mot de passe, cliquez sur le lien suivant :</p>
+        <a href=\"{}\">Réinitialiser le mot de passe</a>",
+        reset_link
+    );
+    let message = Html(html_string.as_str());
+    
     // Prépare le message
     let email = Message::builder()
         .from("fayel@oriens.com".parse().unwrap())
         .to(payload.email.parse().unwrap())
         .subject("Réinitialisation de votre mot de passe")
-        .body(format!(
-            "Bonjour,\n\nPour réinitialiser votre mot de passe, cliquez sur ce lien : {}\n\nCe lien expirera dans 1 heure.",
-            reset_link
-        ))
+        .body(message.0.to_string())
         .unwrap();
 
     // Configure le transport SMTP (exemple avec Gmail, adapte selon ton fournisseur)
@@ -262,24 +269,35 @@ struct Input {
     password: String
 }
 
-async fn show_form_reset_password() -> Html<&'static str> {
-    Html(
+#[derive(Deserialize)]
+struct TokenQuery {
+    token: String,
+}
+
+async fn show_form_reset_password(Query(tokenquery): Query<TokenQuery>) -> Html<String> {
+    let token = &tokenquery.token;
+    Html(format!(
         "<h1>Réinitialisation du mot de passe</h1>
-        <form action=\"/api/reset-password\" method=\"post\">
-            <input type=\"text\" name=\"token\" placeholder=\"Token\" required>
+        <form action=\"/api/reset-password?token={}\" method=\"post\">
             <input type=\"password\" name=\"new_password\" placeholder=\"Nouveau mot de passe\" required>
             <button type=\"submit\">Réinitialiser</button>
         </form>",
-    )
+        token
+    ))
 }
 #[debug_handler]
 async fn reset_password_handler(
     State(state): State<AppState>,
+    Query(token): Query<TokenQuery>,
     Form(form): Form<ResetPasswordRequest>,
 ) -> Result<Json<serde_json::Value>> {
+    println!("Received token: {}", token.token);
+    let res_token = urlencoding::decode(
+        &token.token,
+    )?.to_string();
     // Hasher le token reçu
     let mut hasher = Sha256::new();
-    hasher.update(&form.token);
+    hasher.update(&res_token);
     let hashed_token = format!("{:x}", hasher.finalize());
 
     // Chercher le token en base

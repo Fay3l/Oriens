@@ -15,7 +15,6 @@ pub struct GoogleAuth {
 
 #[derive(Deserialize)]
 pub struct ResetPasswordRequest {
-    pub token: String,
     pub new_password: String,
 }
 

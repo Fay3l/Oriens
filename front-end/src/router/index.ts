@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { jwtDecode } from "jwt-decode";
 import HomeView from '../views/HomeView.vue'
 import Questionnaire from '@/views/survey/Questionnaire.vue'
 import SignUpView from '@/views/auth/SignUpView.vue'
@@ -9,6 +10,8 @@ import DashboardView from '@/views/dashboard/DashboardView.vue'
 import StartQuiz from '@/views/survey/StartQuiz.vue'
 import EndQuiz from '@/views/survey/EndQuiz.vue'
 import ResultQuiz from '@/views/survey/ResultQuiz.vue'
+import ForgotPasswordView from '@/views/auth/ForgotPasswordView.vue';
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,31 +20,33 @@ const router = createRouter({
       path: '/',
       name: 'layout',
       component: TheLayoutView,
-      meta: { requiresAuth: true },
       children: [
         {
           path: '',
           name: 'home',
           component: HomeView,
-          meta: { requiresAuth: true },
+
         },
         {
           path: '/jobs',
           name: 'jobs',
           component: () => import('@/views/jobs/JobsView.vue'),
-          meta: { requiresAuth: true },
+          meta: {
+            requiresAuth: true
+          }
         },
         {
           path: '/dashboard',
           name: 'dashboard',
           component: DashboardView,
-          meta: { requiresAuth: true }, // This route requires authentication
+          meta: {
+            requiresAuth: true
+          }
         },
         {
           path: '/start-quiz',
           name: 'start-quiz',
           component: StartQuiz,
-          meta: { requiresAuth: true },
         },
         {
           path: '/result-quiz',
@@ -53,7 +58,10 @@ const router = createRouter({
     {
       path: '/call',
       name: 'call',
-      component: CallVideoView
+      component: CallVideoView,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/auth',
@@ -68,6 +76,11 @@ const router = createRouter({
           name: 'login',
           path: 'login',
           component: LogInView,
+        },
+        {
+          name:'forgot-password',
+          path: 'forgot-password',
+          component: ForgotPasswordView
         }
       ]
     },
@@ -84,24 +97,35 @@ const router = createRouter({
       path: '/survey',
       name: 'survey',
       component: Questionnaire,
+      meta: {
+        requiresAuth: true
+      }
     }
   ],
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth) {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
     const token = localStorage.getItem('token');
-    console.log('Token:', token); // Debugging line to check token value
-    if (token !== undefined && token !== null) {
-      // User is authenticated, proceed to the route
-      console.log('User is authenticated, proceeding to:', to.name); // Debugging line
-      next();
+    if (token) {
+      try {
+        const decoded: { exp?: number } = jwtDecode(token);
+        const now = Math.floor(Date.now() / 1000);
+        if (decoded.exp && decoded.exp > now) {
+          next();
+        } else {
+          localStorage.removeItem('token');
+          next('/auth/login');
+        }
+      } catch (e) {
+        console.error('JWT decode error:', e);
+        localStorage.removeItem('token');
+        next('/auth/login');
+      }
     } else {
-      // User is not authenticated, redirect to login
-      next('/login');
+      next('/auth/login');
     }
   } else {
-    // Non-protected route, allow access
     next();
   }
 });

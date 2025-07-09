@@ -1,4 +1,4 @@
-import type { UserLogin, UserRegister } from "@/composables/auth";
+import type { UserLogin, UserRegister,ForgotPassword } from "@/composables/auth";
 import router from "@/router";
 import { defineStore } from "pinia";
 
@@ -29,6 +29,29 @@ export const useAuth = defineStore("useAuth", {
                 return true;
             } catch (error) {
                 console.error("Login error:", error);
+                return false;
+            }
+        },
+
+        async forgotPassword(email: ForgotPassword): Promise<boolean> {
+            try {
+                const response = await fetch("/api/forgot-password", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(email),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Forgot password request failed");
+                }
+
+                const data = await response.json();
+                console.log("Forgot password response:", data);
+                return true;
+            } catch (error) {
+                console.error("Forgot password error:", error);
                 return false;
             }
         },

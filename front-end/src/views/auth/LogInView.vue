@@ -10,7 +10,9 @@ import Card from 'primevue/card';
 import OriensButton from '@/components/button/OriensButton.vue';
 import { useAuth } from '@/stores/useAuth';
 import { UserLogin } from '@/composables/auth';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const authStore = useAuth();
 const initialValues = ref<UserLogin>({
     email: '',
@@ -29,25 +31,10 @@ const resolver = zodResolver(
     })
 );
 
-const handleLogin = () => {
-    console.log(initialValues.value);
-    fetch('/api/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(initialValues.value)
-    })
-        .then(response => response.json())
-        .then(data => {
-            localStorage.setItem('token', data.token);
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+const forgotpassword = () =>{
+    router.push({ name: 'forgot-password' });
+}
 
-};
 const onGoogleSubmit = (e: any) => {
     console.log(initialValues.value);
     nextTick(() => {
@@ -66,7 +53,7 @@ const onGoogleSubmit = (e: any) => {
             </template>
             <template #content>
                 
-                <Form v-slot="$form" :initialValues :resolver @submit="authStore.login(initialValues)" >
+                <Form v-slot="$form" :initialValues :resolver  >
                     <div class="flex flex-col gap-2 mt-4">
                         <label for="email" class="font-bold">Email</label>
                         <InputText v-model="initialValues.email" name="email" type="email" placeholder="Email" fluid />
@@ -79,6 +66,7 @@ const onGoogleSubmit = (e: any) => {
                             :feedback="false" toggleMask fluid />
                         <Message v-if="$form.password?.invalid" severity="error" size="small" variant="simple">{{
                             $form.password.error.message }}</Message>
+                        <button @click="forgotpassword" class="text-orange">Mot de passe oublié ?</button>
                     </div>
                     <Button @click="onGoogleSubmit" severity="secondary"  class="w-full flex items-center justify-center gap-2 mt-4">
                         <img src="../../images/Google_logo.svg" class="h-5 w-5" alt="Goolge Logo" />

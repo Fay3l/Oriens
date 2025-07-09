@@ -16,6 +16,7 @@
     "@primevue/forms": "^4.3.1",
     "@primevue/themes": "^4.2.5",
     "@vueuse/core": "^13.1.0",
+    "jwt-decode": "^4.0.0",
     "lib-jitsi-meet": "^1.0.6",
     "pinia": "^3.0.2",
     "primeicons": "^7.0.0",

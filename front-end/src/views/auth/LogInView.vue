@@ -35,6 +35,10 @@ const forgotpassword = () =>{
     router.push({ name: 'forgot-password' });
 }
 
+const home = () => {
+    router.push({ name: 'home' });
+}
+
 const onGoogleSubmit = (e: any) => {
     console.log(initialValues.value);
     nextTick(() => {
@@ -49,7 +53,7 @@ const onGoogleSubmit = (e: any) => {
         <Toast></Toast>
         <Card>
             <template #title>
-                <img class="w-23 h-20 mx-auto" src="../../images/logo.svg" alt="Logo" />
+                <button @click="home"><img class="w-23 h-20 mx-auto"  src="../../images/logo.svg" alt="Logo" /></button>
                 <h2 class="text-center mt-2">Login</h2>
             </template>
             <template #content>
@@ -74,6 +78,10 @@ const onGoogleSubmit = (e: any) => {
                         <p>Se connecter avec Google</p>
                     </Button>
                     <OriensButton class="mt-2 w-full items-center justify-center " size="small" label="Se Connecter"></OriensButton>
+                    <div class="flex justify-center mt-4">
+                        <p>Vous n'avez pas de compte ?</p>
+                        <button @click="router.push({ name: 'signup' })" class="text-orange  ml-2">S'inscrire</button>
+                    </div>
                 </Form>
             </template>
         </Card>

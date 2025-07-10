@@ -162,7 +162,7 @@ const onGoogleSubmit = (e: any) => {
                 </div>
                 <Button @click="onGoogleSubmit"  severity="secondary"  class="col-span-2 mt-4">
                     <img src="../../images/Google_logo.svg" class="h-5 w-5" alt="Google Logo" />
-                    <p>Se connecter avec Google</p>
+                    <p>S'inscrire avec Google</p>
                 </Button>
                 <div class="col-span-2">
                     <OriensButton class="w-full " size="small" label="S'inscrire"></OriensButton>

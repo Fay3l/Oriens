@@ -2,11 +2,14 @@
 import Divider from 'primevue/divider';
 import OriensButton from '@/components/button/OriensButton.vue';
 import GroupCardJob from '@/components/GroupCardJob.vue';
+import InputText from 'primevue/inputtext';
 import { onMounted, ref } from 'vue';
 import { useUsers } from '@/stores/useUsers';
+import { User } from '@/composables/user';
 
 const usersStore = useUsers();
 const page = ref('vue');
+const edituser = ref<User>({} as User);
 const handlePageChange = (newPage: string) => {
     page.value = newPage;
     console.log(page.value);
@@ -16,8 +19,13 @@ onMounted(async () => {
     console.log('DashboardView mounted');
     await usersStore.getUser();
     console.log('User data:', usersStore.users);
+    edituser.value = usersStore?.users[0];
+    if (usersStore.users && usersStore.users.length > 0) {
+    edituser.value = usersStore.users[0];
+    }
 
 }); 
+
 </script>
 
 <template>
@@ -58,7 +66,36 @@ onMounted(async () => {
         <div v-if="page === 'profil'" class="">
             <p>Profil</p>
             <p>{{ usersStore.users }}</p>
+            <div class="flex flex-col gap-4">
+                <div class="flex flex-col gap-2">
+                    <label for="firstname">Prénom</label>
+                    <InputText id="firstname" v-model="edituser.firstName" />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label for="lastname">Nom</label>
+                    <InputText id="lastname" v-model="edituser.lastName" />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label for="email">Email</label>
+                    <InputText id="email" v-model="edituser.email" />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label for="address">Adresse</label>
+                    <InputText id="address" v-model="edituser.address" />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label for="city">Ville</label>
+                    <InputText id="city" v-model="edituser.city" />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label for="postalcode">Code postal</label>
+                    <InputText id="postalcode" v-model="edituser.postalcode" />
+                </div>
+
+            </div>
         </div>
-        <div v-else class=""></div>
+        <div v-else class="">
+            <p>Mes favoris</p>
+        </div>
     </div>
 </template>

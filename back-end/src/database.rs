@@ -161,7 +161,7 @@ impl DB {
         let users = sqlx::query_as!(
             GetUser,
             r#"
-            SELECT * FROM users
+            SELECT id,firstname,lastname,postalcode,city,address,email,number_phone,age,role,experience,badges,username FROM users
             "#
         )
         .fetch_all(&self.db)
@@ -172,7 +172,7 @@ impl DB {
         let user = sqlx::query_as!(
             GetUser,
             r#"
-            SELECT * FROM users WHERE id = $1
+            SELECT id,firstname,lastname,postalcode,city,address,email,number_phone,age,role,experience,badges,username FROM users WHERE id = $1
             "#,
             id
         )
@@ -183,7 +183,7 @@ impl DB {
     pub async fn save_user(&self, user: &GetUser) -> Result<(), sqlx::Error> {
         sqlx::query!(
             r#"
-            UPDATE users SET firstname = $1, lastname = $2, address = $3, email = $4, city = $5, postalcode = $6, number_phone = $7, age = $8, password = $9, experience = $10, badges = $11 WHERE username = $12
+            UPDATE users SET firstname = $1, lastname = $2, address = $3, email = $4, city = $5, postalcode = $6, number_phone = $7, age = $8, experience = $9, badges = $10 WHERE username = $11
             "#,
             user.firstname,
             user.lastname,
@@ -193,7 +193,6 @@ impl DB {
             user.postalcode ,
             user.number_phone,
             user.age as i32,
-            user.password,
             user.experience as i32,
             serde_json::to_value(&user.badges).unwrap(),
             user.username
@@ -214,4 +213,17 @@ impl DB {
         .await?;
         Ok(GetUserId{id: user.id})
     }
+    
+    // pub async fn get_user_by_id(&self, id: Uuid) -> Result<GetUser, sqlx::Error> {
+    //     let user = sqlx::query_as!(
+    //         GetUser,
+    //         r#"
+    //         SELECT id,firstname,lastname,postalcode,city,address,email,number_phone,age,role,experience,badges,username FROM users WHERE id = $1
+    //         "#,
+    //         id
+    //     )
+    //     .fetch_one(&self.db)
+    //     .await?;
+    //     Ok(user)
+    // }
 }

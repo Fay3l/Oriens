@@ -58,7 +58,6 @@ pub struct GetUser {
     pub postalcode:Option<i32>,
     pub number_phone:Option<String>,
     pub age: i32,
-    pub password: String,
     pub experience: i32,
     pub role:String,
     pub badges: serde_json::Value,

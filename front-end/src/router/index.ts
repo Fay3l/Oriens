@@ -107,6 +107,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     const token = localStorage.getItem('token');
+    console.log('Token:', token);
     if (token) {
       try {
         const decoded: { exp?: number } = jwtDecode(token);

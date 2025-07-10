@@ -16,7 +16,7 @@ const home = () => {
 </script>
 
 <template>
-    <header class=" lg:flex flex-wrap sm:  flex flex-row justify-around items-center">
+    <header class="border-b-2 p-1 lg:flex flex-wrap sm:  flex flex-row justify-around items-center">
         <button @click="home"><img src="./../images/logo.svg" alt="" class="m-2 lg:w-48 h-12 sm: w-full h-18"></button>
         <div class="flex gap-6 font-bold lg:text-base sm:text-xs">
             <p>Métiers</p>

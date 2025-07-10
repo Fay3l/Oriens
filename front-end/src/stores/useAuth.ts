@@ -5,7 +5,6 @@ import { defineStore } from "pinia";
 
 export const useAuth = defineStore("useAuth", {
     state: () => ({
-        token: localStorage.getItem("token"),
         isAuthenticated: false,
         user: '',
     }),
@@ -25,6 +24,8 @@ export const useAuth = defineStore("useAuth", {
                 }
 
                 const data = await response.json();
+                console.log("Login response:", data);
+                localStorage.setItem("id", data.id);
                 localStorage.setItem("token", data.token);
                 router.push({ name: "dashboard" });
                 return true;
@@ -84,6 +85,8 @@ export const useAuth = defineStore("useAuth", {
 
         logout() {
             localStorage.removeItem("token");
+            localStorage.removeItem("id");
+            
         },
 
         isAuthenticated(): boolean {

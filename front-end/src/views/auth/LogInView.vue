@@ -58,7 +58,7 @@ const onGoogleSubmit = (e: any) => {
             </template>
             <template #content>
                 
-                <Form v-slot="$form" :initialValues :resolver  >
+                <Form v-slot="$form" @submit="authStore.login(initialValues)" :initialValues :resolver  >
                     <div class="flex flex-col gap-2 mt-4">
                         <label for="email" class="font-bold">Email</label>
                         <InputText v-model="initialValues.email" name="email" type="email" placeholder="Email" fluid />

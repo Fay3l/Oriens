@@ -1,7 +1,7 @@
 use crate::{
     add_experience, create_jwt, jobs_search,
     models::{
-        AppState, Claims, ForgotPasswordRequest, Job, JobsPagination, MetiersPossibles, OAuthCallback, ResetPasswordRequest, SearchQuery, Section, User, UserLogin
+        AppState, Claims, ForgotPasswordRequest, GetUser, Job, JobsPagination, MetiersPossibles, OAuthCallback, ResetPasswordRequest, SearchQuery, Section, User, UserLogin
     },
     questionnaire_result,
 };
@@ -25,6 +25,7 @@ pub fn api_routes() -> Router<AppState> {
         .route("/api", get(handler).layer(from_fn(validate_token)))
         .route("/api/register", post(register_user))
         .route("/api/login", post(login_user))
+        .route("/api/users/{id}", get(get_user).layer(from_fn(validate_token)))
         // .route("/api/jobs", get(jobs_handler))
         .route("/api/jobs", get(jobs_pagination_handler))
         .route(
@@ -194,6 +195,16 @@ async fn register_user(
     let _ = state.db.create_user(&payload).await?;
     Ok(Json(json!({"message": "User registered successfully"})))
 }
+
+async fn get_user(
+    State(state): State<AppState>,
+    Path(id): Path<uuid::Uuid>,
+) -> Result<Json<GetUser>> {
+    let user = state.db.load_user(id).await?;
+    Ok(Json(user))
+}
+
+
 #[axum::debug_handler]
 async fn forgot_password_handler(
     State(state): State<AppState>,

@@ -230,7 +230,8 @@ async fn forgot_password_handler(
     let html_string = format!(
         "<h1>Réinitialisation de votre mot de passe</h1>
         <p>Pour réinitialiser votre mot de passe, cliquez sur le lien suivant :</p>
-        <a href=\"{}\">Réinitialiser le mot de passe</a>",
+        <a href=\"{}\">Réinitialiser le mot de passe</a>
+        <p>Ce lien est valide pendant 1 heure.</p>",
         reset_link
     );
     let message = Html(html_string.as_str());
@@ -275,14 +276,14 @@ struct TokenQuery {
 }
 
 async fn show_form_reset_password(Query(tokenquery): Query<TokenQuery>) -> Html<String> {
-    let token = &tokenquery.token;
+    let token = encode(&tokenquery.token);
     Html(format!(
         "<h1>Réinitialisation du mot de passe</h1>
         <form action=\"/api/reset-password?token={}\" method=\"post\">
             <input type=\"password\" name=\"new_password\" placeholder=\"Nouveau mot de passe\" required>
             <button type=\"submit\">Réinitialiser</button>
         </form>",
-        token
+        token.to_string()
     ))
 }
 #[debug_handler]
@@ -291,10 +292,10 @@ async fn reset_password_handler(
     Query(token): Query<TokenQuery>,
     Form(form): Form<ResetPasswordRequest>,
 ) -> Result<Json<serde_json::Value>> {
-    println!("Received token: {}", token.token);
     let res_token = urlencoding::decode(
         &token.token,
     )?.to_string();
+    println!("Received token: {}", res_token);
     // Hasher le token reçu
     let mut hasher = Sha256::new();
     hasher.update(&res_token);

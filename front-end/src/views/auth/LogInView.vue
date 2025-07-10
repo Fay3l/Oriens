@@ -46,6 +46,7 @@ const onGoogleSubmit = (e: any) => {
 
 <template>
     <div class="flex items-center justify-center h-screen ">
+        <Toast></Toast>
         <Card>
             <template #title>
                 <img class="w-23 h-20 mx-auto" src="../../images/logo.svg" alt="Logo" />

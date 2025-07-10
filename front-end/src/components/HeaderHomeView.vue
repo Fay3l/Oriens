@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import OriensButton from './button/OriensButton.vue';
+import { useRouter } from 'vue-router';
 const value = ref('');
+const router = useRouter();
+const login = ()=>{
+    router.push({ name: 'login' });
+}
 </script>
 
 <template>
@@ -13,7 +18,7 @@ const value = ref('');
             <p>Nos services</p>
         </div>
         <div class="flex gap-6 flex-row items-center lg:text-base sm:text-xs">
-            <p>Se connecter</p>
+            <button class="hover:font-bold" @click="login">Se connecter</button>
             <OriensButton size="small" label="Quiz d'orientation"></OriensButton>
         </div>
     </header>

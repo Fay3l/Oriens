@@ -12,11 +12,19 @@ export const useUsers = defineStore('users', {
     actions: {
         async getUser() {
             const id = localStorage.getItem('id')
+            const token = localStorage.getItem('token')
             this.loading = true
             this.error = null
             try {
                 // Replace with your API call
-                const response = await fetch(`/api/users/${id}`)
+                const response = await fetch(`/api/users/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                }
+                )
                 if (!response.ok) throw new Error('Failed to fetch users')
                 const data = await response.json()
                 this.users = data
@@ -26,7 +34,7 @@ export const useUsers = defineStore('users', {
                 this.loading = false
             }
         },
-        
-        
+
+
     },
 })

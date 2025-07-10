@@ -15,6 +15,7 @@ onMounted(async () => {
     // Initial setup or data fetching can be done here
     console.log('DashboardView mounted');
     await usersStore.getUser();
+    console.log('User data:', usersStore.users);
 
 }); 
 </script>

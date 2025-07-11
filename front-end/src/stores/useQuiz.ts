@@ -1,20 +1,29 @@
+import type { Questionnaire, ResponseQuiz } from '@/composables/questionnaire';
 import { defineStore } from 'pinia';
 
 export const useQuiz = defineStore('useQuiz', {
     state: () => ({
-        collection: [] as Jobs[],
+        collection: {} as ResponseQuiz,
     }),
     actions: {
-        async getJobs(page: number, perPage: number): Promise<Jobs[]> {
+        async getResponseQuiz(quiz:Questionnaire): Promise<ResponseQuiz> {
             try {
-                const response = await fetch(`http://localhost:3000/api/jobs?page=${page}&per_page=${perPage}`);
-                const data: Jobs[] = await response.json();
+                const response = await fetch(`http://localhost:3000/api/survey/result`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    },
+                    body: JSON.stringify(quiz.sections),
+                });
+                const data: ResponseQuiz = await response.json();
                 this.collection = data;
                 console.log('Jobs fetched:', this.collection);
                 return data;
             } catch (error) {
                 console.error('Error fetching jobs:', error);
-                return [];
+                return {} as ResponseQuiz;
             }
         }
     }

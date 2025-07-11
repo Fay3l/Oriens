@@ -2,10 +2,12 @@
 import { ref } from 'vue';
 import { questionnaire } from '../../composables/questionnaire';
 import { useRouter } from 'vue-router';
+import { useQuiz } from '@/stores/useQuiz';
 const currentSection = ref(0);
 const sections = questionnaire.value.sections;
 const selectedOption = ref('');
 const router = useRouter();
+const QuizStore = useQuiz();
 function selectOption(option: string) {
     selectedOption.value = option;
     // Tu peux stocker la réponse dans le modèle ici si besoin
@@ -19,9 +21,9 @@ function nextSection() {
         // Fin du quiz, soumission ou navigation
     }
 }
-const finishQuiz = () => {
-    console.log('Quiz terminé, réponses :', JSON.stringify(questionnaire.value));
-    localStorage.setItem('questionnaireData', JSON.stringify(questionnaire.value)); // ou answers.value si tu veux juste les réponses
+const finishQuiz = async() => {
+    await QuizStore.getResponseQuiz(questionnaire.value)
+     // ou answers.value si tu veux juste les réponses
     router.push({ name: 'result-quiz' });
 };
 </script>

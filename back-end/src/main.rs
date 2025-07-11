@@ -135,7 +135,7 @@ pub async fn questionnaire_result(data: Vec<Section>) -> api::Result<ResponseQui
     let object_json = r#"
     {
         {
-            "competence": "string",
+            "adjectif": "string",
             "description": "string",
             "formations": ["string"],
             "metiers": ["string"],
@@ -143,7 +143,7 @@ pub async fn questionnaire_result(data: Vec<Section>) -> api::Result<ResponseQui
         }
     }
     "#;
-    let content = format!("Pour la personne qui a répondu au questionnaire, trouver la compétence avec la description ensuite les formations suggérées, les métiers compatibles et les softs skills clés qui correspondent aux réponses. Retourner les métiers et les descriptions en objet JSON. Doit retourner {:?}. {:?}",object_json,data);
+    let content = format!("Pour la personne qui a répondu au questionnaire, trouver l'adjectif sur les compétences trouvés avec la description ensuite les formations suggérées, les métiers compatibles et les softs skills clés qui correspondent aux réponses. Retourner les métiers et les descriptions en objet JSON. Doit retourner {:?}. {:?}",object_json,data);
     let result = tokio::task::spawn_blocking(|| mistral_chat(content)).await??;
     let metiers_possibles: ResponseQuiz =
         serde_json::from_str(&result.choices[0].message.content)

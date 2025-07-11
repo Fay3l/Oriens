@@ -93,3 +93,19 @@ export const data_jobs = ref([
       description:'Lorem ipsum dolor dit amet'
   },
 ])
+
+
+export class ResponseQuiz {
+  adjectif: string;
+  description: string;
+  formations: string[];
+  metiers: string[];
+  softskills: string[];
+  constructor(adjectif: string, description: string, formations: string[], metiers: string[], softskills: string[]) {
+    this.adjectif = adjectif;
+    this.description = description;
+    this.formations = formations;
+    this.metiers = metiers;
+    this.softskills = softskills;
+  }
+}

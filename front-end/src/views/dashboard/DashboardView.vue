@@ -6,9 +6,11 @@ import InputText from 'primevue/inputtext';
 import { onMounted, ref } from 'vue';
 import { useUsers } from '@/stores/useUsers';
 import { User } from '@/composables/user';
-
+import Button from 'primevue/button';
 const usersStore = useUsers();
+
 const page = ref('vue');
+const edit=ref(false);
 const edituser = ref<User>({} as User);
 const handlePageChange = (newPage: string) => {
     page.value = newPage;
@@ -16,13 +18,9 @@ const handlePageChange = (newPage: string) => {
 };
 onMounted(async () => {
     // Initial setup or data fetching can be done here
-    console.log('DashboardView mounted');
     await usersStore.getUser();
     console.log('User data:', usersStore.users);
-    edituser.value = usersStore?.users[0];
-    if (usersStore.users && usersStore.users.length > 0) {
-    edituser.value = usersStore.users[0];
-    }
+    edituser.value = usersStore?.users ;
 
 }); 
 
@@ -64,12 +62,17 @@ onMounted(async () => {
             </div>
         </div>
         <div v-if="page === 'profil'" class="">
-            <p>Profil</p>
-            <p>{{ usersStore.users }}</p>
+            <div class="flex flex-row flex-end gap-5 m-2">
+                <Button icon="pi pi-check" variant="text" severity="success" rounded aria-label="Filter" />
+                <Button icon="pi pi-times" severity="danger" variant="text" rounded aria-label="Cancel" :v-show="edit" />
+                <Button icon="pi pi-user-edit" class="!bg-orange" aria-label="Notification" />
+                
+
+            </div>
             <div class="flex flex-col gap-4">
                 <div class="flex flex-col gap-2">
                     <label for="firstname">Prénom</label>
-                    <InputText id="firstname" v-model="edituser.firstName" />
+                    <InputText id="firstname" v-model="edituser.firstName" :disabled="edit" />
                 </div>
                 <div class="flex flex-col gap-2">
                     <label for="lastname">Nom</label>

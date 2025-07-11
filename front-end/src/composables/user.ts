@@ -41,5 +41,5 @@ export class User {
         this.address = options.address;
         this.postalcode = options.postalcode;
     }
-
 }
+

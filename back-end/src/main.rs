@@ -1,6 +1,6 @@
-mod models;
 mod api;
 mod database;
+mod models;
 use axum::Router;
 use chrono;
 use jsonwebtoken::{encode, EncodingKey, Header};
@@ -13,16 +13,18 @@ use std::fs::{self};
 use std::sync::{Arc, RwLock};
 use tower_http::cors::{Any, CorsLayer};
 
+use crate::models::ResponseQuiz;
+
 #[tokio::main]
 async fn main() {
     dotenv::dotenv().ok();
     let file_metiers: Jobs = from_str(
-        &fs::read_to_string("Onisep_Ideo_Fiches_Metiers_09122024.xml").expect("Cannot read file")
-    ).expect("Cannot deserialize file jobs");
-    let google_auth: GoogleAuth = serde_json::from_str(
-        &fs::read_to_string("google.json").expect("Cannot read google.json"),
+        &fs::read_to_string("Onisep_Ideo_Fiches_Metiers_09122024.xml").expect("Cannot read file"),
     )
-    .expect("Cannot deserialize google.json");
+    .expect("Cannot deserialize file jobs");
+    let google_auth: GoogleAuth =
+        serde_json::from_str(&fs::read_to_string("google.json").expect("Cannot read google.json"))
+            .expect("Cannot deserialize google.json");
     let url_db = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let db = database::DB::connect(&url_db)
         .await
@@ -30,7 +32,7 @@ async fn main() {
     let state = AppState {
         metiers: Arc::new(RwLock::new(file_metiers)),
         db,
-        google_auth:Arc::new(RwLock::new(google_auth)),
+        google_auth: Arc::new(RwLock::new(google_auth)),
     };
 
     let cors = CorsLayer::new()
@@ -38,22 +40,16 @@ async fn main() {
         .allow_methods(Any)
         .allow_headers(Any);
     // build our application with a route
-    let app =
-        Router::new()
+    let app = Router::new()
         .merge(api::api_routes())
         .layer(cors)
         .with_state(state);
 
     // run it
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000")
-        .await
-        .unwrap();
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     println!("listening on {}", listener.local_addr().unwrap());
     axum::serve(listener, app).await.unwrap();
 }
-
-
-
 
 pub async fn jobs_search(query: &str) -> api::Result<Vec<Job>> {
     let file = tokio::fs::read_to_string("Onisep_Ideo_Fiches_Metiers_09122024.xml").await?;
@@ -67,7 +63,6 @@ pub async fn jobs_search(query: &str) -> api::Result<Vec<Job>> {
     }
     Ok(items)
 }
-
 
 pub fn create_jwt(id: uuid::Uuid) -> api::Result<String> {
     let expiration = chrono::Utc::now()
@@ -90,7 +85,7 @@ pub fn create_jwt(id: uuid::Uuid) -> api::Result<String> {
 }
 
 pub fn add_experience(user: &mut User, experience: u32) {
-    user.experience += experience ;
+    user.experience += experience;
     check_badges(user);
 }
 
@@ -117,17 +112,14 @@ pub fn check_badges(user: &mut User) {
     }
 }
 
-
-
-pub fn mistral_chat(content:String)-> api::Result<mistralai_client::v1::chat::ChatResponse> {
+pub fn mistral_chat(content: String) -> api::Result<mistralai_client::v1::chat::ChatResponse> {
     let api_key = std::env::var("API_MISTRAL_KEY").expect("API_MISTRAL_KEY must be set");
     let client = Client::new(Some(api_key.to_string()), None, None, None).unwrap();
     let model = Model::OpenMistral7b;
     let messages = vec![ChatMessage {
         role: ChatMessageRole::User,
-        content: content ,
+        content: content,
         tool_calls: None,
-
     }];
     let options = ChatParams {
         temperature: 0.7,
@@ -139,34 +131,22 @@ pub fn mistral_chat(content:String)-> api::Result<mistralai_client::v1::chat::Ch
     Ok(result)
 }
 
-pub async fn questionnaire_result(data: Vec<Section>) -> api::Result<MetiersPossibles> {
+pub async fn questionnaire_result(data: Vec<Section>) -> api::Result<ResponseQuiz> {
     let object_json = r#"
     {
-    "metiers_possibles": [
         {
-        "nom_metier": "",
-        "description": ""
-        },
-        {
-        "nom_metier": "",
-        "description": ""
-        },
-        {
-        "nom_metier": "",
-        "description": ""
-        },
-        {
-        "nom_metier": "",
-        "description": ""
+            "competence": "string",
+            "description": "string",
+            "formations": ["string"],
+            "metiers": ["string"],
+            "softskills": ["string"]
         }
-    ]
     }
     "#;
-    let content = format!("Pour la personne qui a répondu au questionnaire, trouver 2-3 métiers qui correspondent aux réponses. Retourner les métiers et les descriptions en objet JSON. Doit retourner {:?}. {:?}",object_json,data);
-    let result = tokio::task::spawn_blocking(||{mistral_chat(content)}).await??;
-    let metiers_possibles: MetiersPossibles = serde_json::from_str(&result.choices[0].message.content).expect("JSON was not well-formatted");
+    let content = format!("Pour la personne qui a répondu au questionnaire, trouver la compétence avec la description ensuite les formations suggérées, les métiers compatibles et les softs skills clés qui correspondent aux réponses. Retourner les métiers et les descriptions en objet JSON. Doit retourner {:?}. {:?}",object_json,data);
+    let result = tokio::task::spawn_blocking(|| mistral_chat(content)).await??;
+    let metiers_possibles: ResponseQuiz =
+        serde_json::from_str(&result.choices[0].message.content)
+            .expect("JSON was not well-formatted");
     Ok(metiers_possibles)
-
 }
-
-

@@ -1,7 +1,7 @@
 use crate::{
     add_experience, create_jwt, jobs_search,
     models::{
-        AppState, Claims, ForgotPasswordRequest, GetUser, Job, JobsPagination, MetiersPossibles, OAuthCallback, ResetPasswordRequest, SearchQuery, Section, User, UserLogin
+        AppState, Claims, ForgotPasswordRequest, GetUser, Job, JobsPagination, MetiersPossibles, OAuthCallback, ResetPasswordRequest, ResponseQuiz, SearchQuery, Section, User, UserLogin
     },
     questionnaire_result,
 };
@@ -183,7 +183,7 @@ async fn login_user(
     // }
 }
 
-async fn survey_handler(Json(survey): Json<Vec<Section>>) -> Result<Json<MetiersPossibles>> {
+async fn survey_handler(Json(survey): Json<Vec<Section>>) -> Result<Json<ResponseQuiz>> {
     let res = questionnaire_result(survey).await?;
     Ok(Json(res))
 }
@@ -194,6 +194,14 @@ async fn register_user(
 ) -> Result<Json<serde_json::Value>> {
     let _ = state.db.create_user(&payload).await?;
     Ok(Json(json!({"message": "User registered successfully"})))
+}
+
+async fn modify_user(
+    State(state): State<AppState>,
+    Json(payload): Json<GetUser>,
+) -> Result<Json<serde_json::Value>> {
+    state.db.save_user(&payload).await?;
+    Ok(Json(json!({"message": "User modified successfully"})))
 }
 
 async fn get_user(

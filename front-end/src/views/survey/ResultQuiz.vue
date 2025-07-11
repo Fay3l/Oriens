@@ -67,7 +67,7 @@ onMounted(async () => {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token
       },
-      body: JSON.stringify(questionnaireData)
+      body: JSON.parse(questionnaireData || '{}')
     });
     if (!response.ok) throw new Error('Erreur lors de la récupération des résultats');
     const data = await response.json();

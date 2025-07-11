@@ -21,7 +21,7 @@ function nextSection() {
 }
 const finishQuiz = () => {
     console.log('Quiz terminé, réponses :', JSON.stringify(questionnaire.value));
-    localStorage.setItem('quizResult', JSON.stringify(questionnaire.value)); // ou answers.value si tu veux juste les réponses
+    localStorage.setItem('questionnaireData', JSON.stringify(questionnaire.value)); // ou answers.value si tu veux juste les réponses
     router.push({ name: 'result-quiz' });
 };
 </script>

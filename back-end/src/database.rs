@@ -183,7 +183,7 @@ impl DB {
     pub async fn save_user(&self, user: &GetUser) -> Result<(), sqlx::Error> {
         sqlx::query!(
             r#"
-            UPDATE users SET firstname = $1, lastname = $2, address = $3, email = $4, city = $5, postalcode = $6, number_phone = $7, age = $8, experience = $9, badges = $10 WHERE username = $11
+            UPDATE users SET firstname = $1, lastname = $2, address = $3, email = $4, city = $5, postalcode = $6, number_phone = $7, age = $8, experience = $9, badges = $10 WHERE id = $11
             "#,
             user.firstname,
             user.lastname,
@@ -195,7 +195,7 @@ impl DB {
             user.age as i32,
             user.experience as i32,
             serde_json::to_value(&user.badges).unwrap(),
-            user.username
+            user.id
         )
         .execute(&self.db)
         .await?;

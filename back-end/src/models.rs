@@ -154,3 +154,11 @@ pub struct MetiersPossibles {
     pub metiers_possibles: Vec<Metier>,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct ResponseQuiz {
+    competence: String,
+    description: String,
+    formations: Vec<String>,
+    metiers: Vec<String>,
+    softskills: Vec<String>,
+}

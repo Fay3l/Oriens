@@ -4,7 +4,7 @@ import { defineStore } from 'pinia'
 
 export const useUsers = defineStore('users', {
     state: () => ({
-        users: [] as User[],
+        users: {} as User,
         loading: false,
         error: null,
 

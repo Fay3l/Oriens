@@ -22,7 +22,8 @@ function nextSection() {
     }
 }
 const finishQuiz = async() => {
-    await QuizStore.getResponseQuiz(questionnaire.value)
+    console.log(questionnaire.value);
+    localStorage.setItem('questionnaireData', JSON.stringify(questionnaire.value));
      // ou answers.value si tu veux juste les réponses
     router.push({ name: 'result-quiz' });
 };

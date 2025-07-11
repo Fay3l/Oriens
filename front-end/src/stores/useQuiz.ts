@@ -6,16 +6,17 @@ export const useQuiz = defineStore('useQuiz', {
         collection: {} as ResponseQuiz,
     }),
     actions: {
-        async getResponseQuiz(quiz:Questionnaire): Promise<ResponseQuiz> {
+        async getResponseQuiz(quiz:any): Promise<ResponseQuiz> {
             try {
+                const token = localStorage.getItem('token');
                 const response = await fetch(`http://localhost:3000/api/survey/result`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Authorization': `Bearer ${token}`,
                     },
-                    body: JSON.stringify(quiz.sections),
+                    body: JSON.stringify({quiz}),
                 });
                 const data: ResponseQuiz = await response.json();
                 this.collection = data;

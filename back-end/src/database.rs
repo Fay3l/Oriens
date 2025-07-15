@@ -1,7 +1,7 @@
 use sqlx::postgres::{PgPool, PgPoolOptions};
 use bcrypt::{hash, verify, DEFAULT_COST};
 use uuid::Uuid;
-use crate::models::{GetUser, GetUserId, PasswordResetToken, User};
+use crate::models::{GetUser, GetUserId, PasswordResetToken, User, UserQuiz};
 
 #[derive(Debug,Clone)]
 pub struct DB{
@@ -211,6 +211,26 @@ impl DB {
         Ok(GetUserId{id: user.id})
     }
     
+    pub async fn insert_quiz_id(&self,quiz:UserQuiz) -> Result<String,sqlx::Error>
+    {
+        let stmt = sqlx::query!(
+            r#"
+            INSERT INTO quiz (id,adjectif,description,formations,metiers,softskills) 
+            VALUES ($1,$2,$3,$4,$5,$6);
+            "#,
+            quiz.id,
+            quiz.adjectif,
+            quiz.description,
+            serde_json::to_value(quiz.formations).unwrap(),
+            serde_json::to_value(quiz.metiers).unwrap(),
+            serde_json::to_value(quiz.softskills).unwrap(),
+        )
+        .execute(&self.db)
+        .await?;
+        Ok("value".to_string())
+
+    }
+
     // pub async fn get_user_by_id(&self, id: Uuid) -> Result<GetUser, sqlx::Error> {
     //     let user = sqlx::query_as!(
     //         GetUser,

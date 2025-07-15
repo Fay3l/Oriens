@@ -148,5 +148,6 @@ pub async fn questionnaire_result(data: Questionnaire) -> api::Result<ResponseQu
     let response: ResponseQuiz =
         serde_json::from_str(&result.choices[0].message.content)
             .expect("JSON was not well-formatted");
+
     Ok(response)
 }

@@ -1,7 +1,7 @@
 use crate::{
     add_experience, create_jwt, jobs_search,
     models::{
-        AppState, Claims, ForgotPasswordRequest, GetUser, Job, JobsPagination, MetiersPossibles, OAuthCallback, Questionnaire, ResetPasswordRequest, ResponseQuiz, SearchQuery, Section, User, UserLogin
+        AppState, Claims, ForgotPasswordRequest, GetUser, Job, JobsPagination, MetiersPossibles, OAuthCallback, Questionnaire, ResetPasswordRequest, ResponseQuiz, SearchQuery, Section, User, UserLogin, UserQuiz
     },
     questionnaire_result,
 };
@@ -33,7 +33,7 @@ pub fn api_routes() -> Router<AppState> {
             get(jobssearch_handler).layer(from_fn(validate_token)),
         )
         .route(
-            "/api/survey/result",
+            "/api/survey/result/{id}",
             post(survey_handler).layer(from_fn(validate_token)),
         )
         .route("/api/auth/google", get(start_google_auth))
@@ -183,8 +183,18 @@ async fn login_user(
     // }
 }
 
-async fn survey_handler(Json(survey): Json<Questionnaire>) -> Result<Json<ResponseQuiz>> {
+#[axum::debug_handler]
+async fn survey_handler(State(state): State<AppState>,Path(id): Path<uuid::Uuid>,Json(survey): Json<Questionnaire>) -> Result<Json<ResponseQuiz>> {
     let res = questionnaire_result(survey).await?;
+    let data = UserQuiz {
+        id: id.to_string(),
+        adjectif: res.adjectif.clone(),
+        description: res.description.clone(),
+        formations: res.formations.clone(),
+        metiers: res.metiers.clone(),
+        softskills: res.softskills.clone(),
+    };
+    state.db.insert_quiz_id(data).await?;
     Ok(Json(res))
 }
 
@@ -213,7 +223,7 @@ async fn get_user(
 }
 
 
-#[axum::debug_handler]
+
 async fn forgot_password_handler(
     State(state): State<AppState>,
     Json(payload): Json<ForgotPasswordRequest>,

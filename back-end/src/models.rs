@@ -154,20 +154,20 @@ pub struct MetiersPossibles {
     pub metiers_possibles: Vec<Metier>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug,Clone, Deserialize, Serialize)]
 pub struct ResponseQuiz {
-    adjectif: String,
-    description: String,
-    formations: Vec<String>,
-    metiers: Vec<String>,
-    softskills: Vec<String>,
+    pub adjectif: String,
+    pub description: String,
+    pub formations: Vec<String>,
+    pub metiers: Vec<String>,
+    pub softskills: Vec<String>,
 }
-
+#[derive(Debug,Clone, Deserialize, Serialize)]
 pub struct UserQuiz{
     pub id: String,
-    adjectif: String,
-    description: String,
-    formations: Vec<String>,
-    metiers: Vec<String>,
-    softskills: Vec<String>,
+    pub adjectif: String,
+    pub description: String,
+    pub formations: Vec<String>,
+    pub metiers: Vec<String>,
+    pub softskills: Vec<String>,
 }

@@ -9,8 +9,9 @@ export const useQuiz = defineStore('useQuiz', {
         async getResponseQuiz(quiz: Questionnaire[]): Promise<ResponseQuiz> {
             try {
                 const token = localStorage.getItem('token');
+                const id = localStorage.getItem('id');
                 console.log('Quiz data:', quiz);
-                const response = await fetch(`http://localhost:3000/api/survey/result`, {
+                const response = await fetch(`http://localhost:3000/api/survey/result/${id}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

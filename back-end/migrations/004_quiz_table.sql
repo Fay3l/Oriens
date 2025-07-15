@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS quiz (
-    id VARCHAR(30) NOT NULL,
+    id VARCHAR(37) NOT NULL,
     adjectif VARCHAR(255) NOT NULL,
     description TEXT,
     formations JSONB DEFAULT '[]' NOT NULL,

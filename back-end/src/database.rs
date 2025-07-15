@@ -1,7 +1,7 @@
 use sqlx::postgres::{PgPool, PgPoolOptions};
 use bcrypt::{hash, verify, DEFAULT_COST};
 use uuid::Uuid;
-use crate::models::{GetUser, GetUserId, PasswordResetToken, User, UserQuiz};
+use crate::models::{GetUser, GetUserId, GetUserQuiz, PasswordResetToken, User, UserQuiz};
 
 #[derive(Debug,Clone)]
 pub struct DB{
@@ -231,6 +231,20 @@ impl DB {
 
     }
 
+    pub async fn get_last_quiz(&self,id:&str) -> Result<GetUserQuiz, sqlx::Error> {
+        let quiz = sqlx::query_as!(
+            GetUserQuiz,
+            r#"
+            SELECT id,adjectif,description,formations,metiers,softskills FROM quiz WHERE id = $1 ORDER BY completed_at DESC LIMIT 1 
+            "#,
+            id 
+        )
+        .fetch_one(&self.db)
+        .await?;
+        Ok(quiz)
+    }
+
+    
     // pub async fn get_user_by_id(&self, id: Uuid) -> Result<GetUser, sqlx::Error> {
     //     let user = sqlx::query_as!(
     //         GetUser,

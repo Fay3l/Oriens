@@ -30,7 +30,7 @@
           </div>
         </div>
       </div>
-      <button v-if="!loading"
+      <button v-if="!loading" @click="dashboard"
         class="mt-8 px-8 py-3 bg-gradient-to-r from-[#EE7213] to-[#F09A4E] text-white rounded-lg text-base font-semibold shadow hover:brightness-110 transition-all">
         Découvrir mon profil
       </button>
@@ -43,19 +43,15 @@ import { useQuiz } from '@/stores/useQuiz';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
-interface Metier {
-  nom_metier: string;
-  description: string;
-}
+const router = useRouter();
 
 const quizStore = useQuiz(); 
 const loading = ref(true);
 const error = ref('');
 
-// On suppose que les réponses du questionnaire sont stockées dans le localStorage ou dans un store global
-// const storedData = localStorage.getItem('questionnaireData');
-// Si un token est nécessaire pour l'authentification
-
+const dashboard = () => {
+    router.push({ name: 'dashboard' });
+}
 
 onMounted(async () => {
   loading.value = true;
@@ -64,12 +60,15 @@ onMounted(async () => {
     const data = localStorage.getItem('questionnaireData');
     console.log('Data from localStorage:', data);
     const res = await quizStore.getResponseQuiz(data ? JSON.parse(data) : {});
+    localStorage.setItem('quizResults', JSON.stringify(res));
+
     if (!res || res.error) {
       error.value = res?.error || "Erreur lors de la récupération des résultats.";
     }
   } catch (e: any) {
     error.value = e.message || "Erreur inconnue";
   } finally {
+    localStorage.removeItem('questionnaireData')
     loading.value = false;
   }
 });

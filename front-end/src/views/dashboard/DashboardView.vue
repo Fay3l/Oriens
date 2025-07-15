@@ -8,10 +8,12 @@ import { useUsers } from '@/stores/useUsers';
 import { User } from '@/composables/user';
 import Button from 'primevue/button';
 import ParentDashboard from '@/components/ParentDashboard.vue';
+import { ResponseQuiz } from '@/composables/questionnaire';
 const usersStore = useUsers();
 
 const page = ref('vue');
-const edit=ref(false);
+const resultquiz = ref<ResponseQuiz>();
+const edit = ref(false);
 const edituser = ref<User>({} as User);
 const handlePageChange = (newPage: string) => {
     page.value = newPage;
@@ -20,10 +22,13 @@ const handlePageChange = (newPage: string) => {
 onMounted(async () => {
     // Initial setup or data fetching can be done here
     await usersStore.getUser();
+    await usersStore.GetLastQuiz();
+    resultquiz.value = usersStore.userQuiz;
     console.log('User data:', usersStore.users);
-    edituser.value = usersStore?.users ;
+    edituser.value = usersStore?.users;
 
-}); 
+
+});
 
 </script>
 
@@ -35,23 +40,50 @@ onMounted(async () => {
         <div>
             <div class="mb-10 text-3xl font-bold">Mon espace Oriens</div>
             <div class="flex items-center  gap-4">
-                <button @click="handlePageChange('vue')" class="p-2 hover:shadow-lg rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">Vue d'ensemble</button>
-                <button @click="handlePageChange('profil')" class="p-2 hover:shadow-lg rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">Mon profil</button>
-                <button @click="handlePageChange('favoris')" class="p-2 hover:shadow-lg rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">Mes favoris</button>
+                <button @click="handlePageChange('vue')"
+                    class="p-2 hover:shadow-lg rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">Vue
+                    d'ensemble</button>
+                <button @click="handlePageChange('profil')"
+                    class="p-2 hover:shadow-lg rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">Mon
+                    profil</button>
+                <button @click="handlePageChange('favoris')"
+                    class="p-2 hover:shadow-lg rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">Mes
+                    favoris</button>
             </div>
             <Divider></Divider>
         </div>
         <div v-if="page === 'vue'">
             <div class="grid grid-cols-3 gap-6">
-                <div class="bg-white border rounded-xl"></div>
+                <div class="flex flex-col gap-5 items-center justify-center bg-white border rounded-xl">
+                    <div class="font-bold text-3xl text-orange">
+                        {{ resultquiz?.adjectif }}
+                    </div>
+                    <div class="flex gap-5 ">
+                        <div>
+                            <p class="text-xl mb-2 font-bold">Métiers</p>
+                            <div v-for="metier in resultquiz?.metiers">
+                                <p>{{ metier }}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-xl mb-2 font-bold">Formations</p>
+                            <div v-for="formation in resultquiz?.formations">
+                                <p>{{ formation }}</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
                 <div class="col-span-2">
                     <div class="flex flex-col gap-2">
                         <div class="flex gap-2 items-center">
-                            <OriensButton label="Mes favoris" ></OriensButton>
-                            <OriensButton label="Mes recommandations"  color="white"></OriensButton>
+                            <OriensButton label="Mes favoris"></OriensButton>
+                            <OriensButton label="Mes recommandations" color="white"></OriensButton>
                         </div>
-                        <div >
-                            <GroupCardJob :page="1" :perpage="3" class="grid grid-cols-3 gap-4 items-center justify-center"></GroupCardJob>
+                        <div>
+                            <GroupCardJob :page="1" :perpage="3"
+                                class="grid grid-cols-3 gap-4 items-center justify-center"></GroupCardJob>
                         </div>
                     </div>
                 </div>
@@ -68,9 +100,10 @@ onMounted(async () => {
         <div v-if="page === 'profil'" class="">
             <div class="flex flex-row flex-end gap-5 m-2">
                 <Button icon="pi pi-check" variant="text" severity="success" rounded aria-label="Filter" />
-                <Button icon="pi pi-times" severity="danger" variant="text" rounded aria-label="Cancel" :v-show="edit" />
+                <Button icon="pi pi-times" severity="danger" variant="text" rounded aria-label="Cancel"
+                    :v-show="edit" />
                 <Button icon="pi pi-user-edit" class="!bg-orange" aria-label="Notification" />
-                
+
 
             </div>
             <div class="flex flex-col gap-4">

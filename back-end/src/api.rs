@@ -1,7 +1,7 @@
 use crate::{
     add_experience, create_jwt, jobs_search,
     models::{
-        AppState, Claims, ForgotPasswordRequest, GetUser, Job, JobsPagination, MetiersPossibles, OAuthCallback, Questionnaire, ResetPasswordRequest, ResponseQuiz, SearchQuery, Section, User, UserLogin, UserQuiz
+        AppState, Claims, ForgotPasswordRequest, GetUser, GetUserQuiz, Job, JobsPagination, MetiersPossibles, OAuthCallback, Questionnaire, ResetPasswordRequest, ResponseQuiz, SearchQuery, Section, User, UserLogin, UserQuiz
     },
     questionnaire_result,
 };
@@ -26,6 +26,7 @@ pub fn api_routes() -> Router<AppState> {
         .route("/api/register", post(register_user))
         .route("/api/login", post(login_user))
         .route("/api/users/{id}", get(get_user).layer(from_fn(validate_token)))
+        .route("/api/users/{id}/quiz", get(get_last_quiz).layer(from_fn(validate_token)))
         // .route("/api/jobs", get(jobs_handler))
         .route("/api/jobs", get(jobs_pagination_handler))
         .route(
@@ -221,7 +222,14 @@ async fn get_user(
     let user = state.db.load_user(id).await?;
     Ok(Json(user))
 }
-
+#[axum::debug_handler]
+async fn get_last_quiz(
+    State(state): State<AppState>,
+    Path(id): Path<String>,
+) -> Result<Json<GetUserQuiz>> {
+    let quiz = state.db.get_last_quiz(&id).await?;
+    Ok(Json(quiz))
+}
 
 
 async fn forgot_password_handler(

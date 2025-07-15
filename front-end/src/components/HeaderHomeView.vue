@@ -24,6 +24,7 @@ const home = () => {
             <p>Nos services</p>
         </div>
         <div class="flex gap-6 flex-row items-center lg:text-base sm:text-xs">
+            
             <button class="hover:font-bold" @click="login">Se connecter</button>
             <OriensButton size="small" @click="quiz" label="Quiz d'orientation"></OriensButton>
         </div>

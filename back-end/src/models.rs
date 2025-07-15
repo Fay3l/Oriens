@@ -171,3 +171,12 @@ pub struct UserQuiz{
     pub metiers: Vec<String>,
     pub softskills: Vec<String>,
 }
+#[derive(Debug,Clone, Deserialize, Serialize)]
+pub struct GetUserQuiz {
+    pub id: String,
+    pub adjectif: String,
+    pub description: String,
+    pub formations: serde_json::Value,
+    pub metiers: serde_json::Value,
+    pub softskills: serde_json::Value,
+}

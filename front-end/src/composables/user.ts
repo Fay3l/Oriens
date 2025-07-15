@@ -43,3 +43,27 @@ export class User {
     }
 }
 
+export class UserQuiz {
+    id: string;
+    adjectif: string;
+    description: string;
+    formations: string[];
+    metiers: string[];
+    softskills: string[];
+
+    constructor(options: {
+        id: string;
+        adjectif: string;
+        description: string;
+        formations: string[];
+        metiers: string[];
+        softskills: string[];
+    }) {
+        this.id = options.id;
+        this.adjectif = options.adjectif;
+        this.description = options.description;
+        this.formations = options.formations;
+        this.metiers = options.metiers;
+        this.softskills = options.softskills;
+    }
+}

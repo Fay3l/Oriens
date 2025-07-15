@@ -7,6 +7,7 @@ import { onMounted, ref } from 'vue';
 import { useUsers } from '@/stores/useUsers';
 import { User } from '@/composables/user';
 import Button from 'primevue/button';
+import ParentDashboard from '@/components/ParentDashboard.vue';
 const usersStore = useUsers();
 
 const page = ref('vue');
@@ -27,7 +28,10 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="m-10">
+    <div v-if="edituser.role === 'ParentStudent'">
+        <ParentDashboard></ParentDashboard>
+    </div>
+    <div v-else class="m-10">
         <div>
             <div class="mb-10 text-3xl font-bold">Mon espace Oriens</div>
             <div class="flex items-center  gap-4">

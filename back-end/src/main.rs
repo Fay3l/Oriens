@@ -13,7 +13,7 @@ use std::fs::{self};
 use std::sync::{Arc, RwLock};
 use tower_http::cors::{Any, CorsLayer};
 
-use crate::models::ResponseQuiz;
+use crate::models::{Questionnaire, ResponseQuiz};
 
 #[tokio::main]
 async fn main() {
@@ -131,7 +131,7 @@ pub fn mistral_chat(content: String) -> api::Result<mistralai_client::v1::chat::
     Ok(result)
 }
 
-pub async fn questionnaire_result(data: Vec<Section>) -> api::Result<ResponseQuiz> {
+pub async fn questionnaire_result(data: Questionnaire) -> api::Result<ResponseQuiz> {
     let object_json = r#"
     {
         {
@@ -145,8 +145,8 @@ pub async fn questionnaire_result(data: Vec<Section>) -> api::Result<ResponseQui
     "#;
     let content = format!("Pour la personne qui a répondu au questionnaire, trouver l'adjectif sur les compétences trouvés avec la description ensuite les formations suggérées, les métiers compatibles et les softs skills clés qui correspondent aux réponses. Retourner les métiers et les descriptions en objet JSON. Doit retourner {:?}. {:?}",object_json,data);
     let result = tokio::task::spawn_blocking(|| mistral_chat(content)).await??;
-    let metiers_possibles: ResponseQuiz =
+    let response: ResponseQuiz =
         serde_json::from_str(&result.choices[0].message.content)
             .expect("JSON was not well-formatted");
-    Ok(metiers_possibles)
+    Ok(response)
 }

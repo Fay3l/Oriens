@@ -1,7 +1,7 @@
 use crate::{
     add_experience, create_jwt, jobs_search,
     models::{
-        AppState, Claims, ForgotPasswordRequest, GetUser, Job, JobsPagination, MetiersPossibles, OAuthCallback, ResetPasswordRequest, ResponseQuiz, SearchQuery, Section, User, UserLogin
+        AppState, Claims, ForgotPasswordRequest, GetUser, Job, JobsPagination, MetiersPossibles, OAuthCallback, Questionnaire, ResetPasswordRequest, ResponseQuiz, SearchQuery, Section, User, UserLogin
     },
     questionnaire_result,
 };
@@ -183,7 +183,7 @@ async fn login_user(
     // }
 }
 
-async fn survey_handler(Json(survey): Json<Vec<Section>>) -> Result<Json<ResponseQuiz>> {
+async fn survey_handler(Json(survey): Json<Questionnaire>) -> Result<Json<ResponseQuiz>> {
     let res = questionnaire_result(survey).await?;
     Ok(Json(res))
 }

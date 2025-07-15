@@ -60,9 +60,16 @@ const error = ref('');
 onMounted(async () => {
   loading.value = true;
   error.value = '';
-  const quiz = localStorage.getItem('questionnaireData');
-  await quizStore.getResponseQuiz({quiz});
-  if (quizStore.collection !== null) {
+  try {
+    const data = localStorage.getItem('questionnaireData');
+    console.log('Data from localStorage:', data);
+    const res = await quizStore.getResponseQuiz(data ? JSON.parse(data) : {});
+    if (!res || res.error) {
+      error.value = res?.error || "Erreur lors de la récupération des résultats.";
+    }
+  } catch (e: any) {
+    error.value = e.message || "Erreur inconnue";
+  } finally {
     loading.value = false;
   }
 });

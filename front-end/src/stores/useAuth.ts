@@ -27,7 +27,7 @@ export const useAuth = defineStore("useAuth", {
                 console.log("Login response:", data);
                 localStorage.setItem("id", data.id);
                 localStorage.setItem("token", data.token);
-                router.push({ name: "dashboard" });
+                router.back();
                 return true;
             } catch (error) {
                 console.error("Login error:", error);

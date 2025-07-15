@@ -93,9 +93,6 @@ impl DB {
                 Err(e)
             }
         }
-        
-        
-        
     }
 
     pub async fn delete_all_password_reset_tokens(&self, user_id: &Uuid) -> Result<(), sqlx::Error> {

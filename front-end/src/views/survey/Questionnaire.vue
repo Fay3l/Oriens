@@ -3,28 +3,39 @@ import { ref } from 'vue';
 import { questionnaire } from '../../composables/questionnaire';
 import { useRouter } from 'vue-router';
 import { useQuiz } from '@/stores/useQuiz';
+
 const currentSection = ref(0);
+const currentQuestion = ref(0);
 const sections = questionnaire.value.sections;
-const selectedOption = ref('');
 const router = useRouter();
 const QuizStore = useQuiz();
+
+const selectedOption = ref(sections[currentSection.value].questions[currentQuestion.value].response || '');
+
 function selectOption(option: string) {
     selectedOption.value = option;
-    // Tu peux stocker la réponse dans le modèle ici si besoin
+    // Stocke la réponse dans la structure du questionnaire
+    sections[currentSection.value].questions[currentQuestion.value].response = option;
 }
 
 function nextSection() {
-    if (currentSection.value < sections.length - 1) {
+    // Enregistre la réponse avant de passer à la suivante
+    sections[currentSection.value].questions[currentQuestion.value].response = selectedOption.value;
+    // Passe à la question suivante dans la section
+    if (currentQuestion.value < sections[currentSection.value].questions.length - 1) {
+        currentQuestion.value++;
+        selectedOption.value = sections[currentSection.value].questions[currentQuestion.value].response || '';
+    } else if (currentSection.value < sections.length - 1) {
+        // Passe à la section suivante
         currentSection.value++;
-        selectedOption.value = '';
-    } else {
-        // Fin du quiz, soumission ou navigation
+        currentQuestion.value = 0;
+        selectedOption.value = sections[currentSection.value].questions[currentQuestion.value].response || '';
     }
 }
-const finishQuiz = async() => {
-    console.log(questionnaire.value);
+
+const finishQuiz = async () => {
+    sections[currentSection.value].questions[currentQuestion.value].response = selectedOption.value;
     localStorage.setItem('questionnaireData', JSON.stringify(questionnaire.value));
-     // ou answers.value si tu veux juste les réponses
     router.push({ name: 'result-quiz' });
 };
 </script>
@@ -90,18 +101,20 @@ const finishQuiz = async() => {
                 </div>
                 <!-- Question -->
                 <div class="mt-8 text-center text-white text-xl font-semibold mb-8">
-                    {{ sections[currentSection].questions[0].question }}
+                    {{ sections[currentSection].questions[currentQuestion].question }}
                 </div>
-                <!-- Options -->
                 <div class="grid grid-cols-2 gap-4 mb-8">
-                    <button v-for="(option, idx) in sections[currentSection].questions[0].options" :key="idx"
+                    <button v-for="(option, idx) in sections[currentSection].questions[currentQuestion].options"
+                        :key="idx"
                         :class="['rounded-lg border border-white py-3 font-semibold text-base transition-all',
-                            selectedOption === option ? 'bg-white text-[#EE7213]' : 'bg-transparent text-white hover:bg-white hover:text-[#EE7213]']" @click="selectOption(option)">
+                            selectedOption === option ? 'bg-white text-[#EE7213]' : 'bg-transparent text-white hover:bg-white hover:text-[#EE7213]']"
+                        @click="selectOption(option)">
                         {{ option }}
                     </button>
                 </div>
                 <!-- Bouton suivant -->
-                <div v-if="currentSection == sections.length - 1">
+                <div
+                    v-if="currentSection == sections.length - 1 && currentQuestion == sections[currentSection].questions.length - 1">
                     <button
                         class="w-full py-3 rounded-lg bg-[#F6CBA3] text-[#A97A50] font-semibold text-base mt-2 transition-all hover:brightness-105"
                         @click="finishQuiz">

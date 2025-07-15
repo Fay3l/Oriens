@@ -162,3 +162,12 @@ pub struct ResponseQuiz {
     metiers: Vec<String>,
     softskills: Vec<String>,
 }
+
+pub struct UserQuiz{
+    pub id: String,
+    adjectif: String,
+    description: String,
+    formations: Vec<String>,
+    metiers: Vec<String>,
+    softskills: Vec<String>,
+}

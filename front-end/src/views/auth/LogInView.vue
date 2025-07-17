@@ -26,8 +26,6 @@ const resolver = zodResolver(
         email: z
             .string()
             .email({ message: 'Invalid email address.' }),
-        password: z
-            .string()
     })
 );
 
@@ -37,6 +35,9 @@ const forgotpassword = () =>{
 
 const home = () => {
     router.push({ name: 'home' });
+}
+const signup = () => {
+    router.push({ name: 'signup' });
 }
 
 const onGoogleSubmit = (e: any) => {
@@ -69,8 +70,6 @@ const onGoogleSubmit = (e: any) => {
                         <label for="password" class="font-bold">Mot de passe</label>
                         <Password v-model="initialValues.password" name="password" placeholder="Mot de passe"
                             :feedback="false" toggleMask fluid />
-                        <Message v-if="$form.password?.invalid" severity="error" size="small" variant="simple">{{
-                            $form.password.error.message }}</Message>
                         <button @click="forgotpassword" class="text-orange">Mot de passe oublié ?</button>
                     </div>
                     <Button @click="onGoogleSubmit" severity="secondary"  class="w-full flex items-center justify-center gap-2 mt-4">
@@ -80,7 +79,7 @@ const onGoogleSubmit = (e: any) => {
                     <OriensButton class="mt-2 w-full items-center justify-center " size="small" label="Se Connecter"></OriensButton>
                     <div class="flex justify-center mt-4">
                         <p>Vous n'avez pas de compte ?</p>
-                        <button @click="router.push({ name: 'signup' })" class="text-orange  ml-2">S'inscrire</button>
+                        <button @click="signup" class="text-orange  ml-2">S'inscrire</button>
                     </div>
                 </Form>
             </template>

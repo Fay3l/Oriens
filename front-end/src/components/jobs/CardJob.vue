@@ -48,10 +48,10 @@ function handleClick2() {
     <Card
         class="border hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
         <template #content>
-            <div class="flex flex-col gap-4 items-center ">
+            <div class="flex flex-col gap-4 items-center justify-center"> 
                 <button @click="handleClick()">
-                    <div>
-                        <img class=" lg:w-29 sm:w-30 h-26 " alt="" src="./../../images/jobs_card.svg">
+                    <div class="flex justify-center items-center mb-2">
+                        <img class=" max-sm:w-[120px] max-sm:h-[120px] max-md:w-[240px] max-md:h-[240px]  " alt="" src="./../../images/jobs_card.svg">
                     </div>
 
                     <div class="flex flex-col items-center gap-1">

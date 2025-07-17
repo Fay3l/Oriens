@@ -89,7 +89,7 @@ const checkdisabled = () => {
         </IconField>
     </div>
     <div>
-        <GroupCardJob class="grid grid-cols-4 gap-6 mr-40 ml-40 mb-5" :page="page" :jobs="jobs" :perpage="perPage"></GroupCardJob>
+        <GroupCardJob class="grid grid-cols-1 justify-center gap-6 mr-40 ml-40 mb-5 md:grid-cols-4" :page="page" :jobs="jobs" :perpage="perPage"></GroupCardJob>
     </div>
     <div class="flex justify-center items-center gap-20 p-10 mt-10">
         <button @click="previouspage" >

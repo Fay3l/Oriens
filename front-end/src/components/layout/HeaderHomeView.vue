@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import OriensButton from './button/OriensButton.vue';
+import OriensButton from './../button/OriensButton.vue';
 import { useRouter } from 'vue-router';
 import { useUsers } from '@/stores/useUsers';
 const userStore = useUsers();
@@ -30,7 +30,7 @@ const animationbutton = "p-2 rounded-lg hover:shadow-xl transform hover:-transla
 
 <template>
     <header class="border-b-2 p-1 lg:flex flex-wrap sm:  flex flex-row justify-around items-center">
-        <button @click="home"><img src="./../images/logo.svg" alt="" class="m-2 lg:w-48 h-12 sm: w-full h-18"></button>
+        <button @click="home"><img src="./../../images/logo.svg" alt="" class="m-2 lg:w-48 h-12 sm: w-full h-18"></button>
         <div class="flex gap-6 font-bold lg:text-base sm:text-xs">
             <button :class="animationbutton" @click="jobs">Métiers</button>
             <button :class="animationbutton">Formations</button>

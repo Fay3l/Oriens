@@ -1,5 +1,6 @@
 <script setup>
-import HeaderHomeView from '@/components/HeaderHomeView.vue';
+import HeaderHomeView from '@/components/layout/HeaderHomeView.vue';
+import Footer from '@/components/layout/Footer.vue';
 </script>
 
 <template>
@@ -10,5 +11,8 @@ import HeaderHomeView from '@/components/HeaderHomeView.vue';
                 <router-view />
             </main>
         </div>
+        <footer>
+            <Footer></Footer>
+        </footer>
     </div>
 </template>

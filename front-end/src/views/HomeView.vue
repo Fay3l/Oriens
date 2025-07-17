@@ -11,9 +11,9 @@ import router from '@/router';
 <template>
     <div
         class="flex flex-row justify-around items-center rounded-b-5xl gap-10 mb-10  xs:flex-col gap-6 rounded-b-none items-center m-5 ">
-        <div class="flex flex-col  items-center lg:text-4xl gap-3 sm:text-2xl gap-3 xs:text-lg">
-            <div class="flex flex-col gap-6">
-                <div class=" font-bold flex flex-col gap-5 ">
+        <div class="flex flex-col  items-center ">
+            <div class="flex flex-col gap-6 ">
+                <div class=" font-bold flex flex-col gap-5 lg:text-6xl gap-3 md:text-5xl gap-3 xs:text-2xl ">
                     <p class="font-jakarta">Un accompagnement</p>
                     <div class="flex flex-row items-center gap-2">
                         <p class="text-orange font-shadows ">personnalisé</p>
@@ -28,10 +28,6 @@ import router from '@/router';
                     <img alt="" src="./../images/lorem_ipsum.svg">
                 </div>
                 <div class=" flex flex-col gap-4  ">
-                    <div>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                        <p>Vehicula massa in enim luctus. Rutrum arcu.</p>
-                    </div>
                     <div class="text-base">
                         <OriensButton label="FAIRE MON TEST D'ORIENTATION" @click="router.push({ name: 'signup' })">
                         </OriensButton>
@@ -40,7 +36,7 @@ import router from '@/router';
             </div>
         </div>
         <div class="hidden md:flex"> 
-            <img alt="" class="mt-5 w-full " src="./../images/Image.svg">
+            <img alt="" class="mt-5 w-[85%] h-[50%] " src="./../images/Image.svg">
         </div>
     </div>
     <div class="overflow-hidden">
@@ -53,11 +49,11 @@ import router from '@/router';
         <p class="">LES JEUNES DE 12 À 18 ANS</p>
     </div>
     <div>
-        <GroupCardJob class="grid grid-cols-4 gap-4 m-20" :page="1" :perpage="4"></GroupCardJob>
+        <GroupCardJob class="grid grid-cols-1 gap-8 md:grid-cols-4 gap-4 m-20" :page="1" :perpage="4"></GroupCardJob>
     </div>
     <!-- Avis utilisateurs -->
     <div class="bg-white py-12">
-        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
             <div class="bg-gray-50 rounded-xl p-6 shadow">
                 <div class="flex items-center gap-2 mb-2">
                     <img src="../images/avatar1.png" alt="avatar" class="w-8 h-8 rounded-full" />
@@ -102,14 +98,14 @@ import router from '@/router';
 
     <!-- Logos écoles/partenaires -->
     <div class="flex flex-wrap justify-center items-center gap-8 py-10 bg-gray-50">
-        <img src="../images/logo1.png" alt="logo1" class="h-12 opacity-60 grayscale" />
-        <img src="../images/logo2.png" alt="logo2" class="h-12 opacity-60 grayscale" />
-        <img src="../images/logo3.png" alt="logo3" class="h-12 opacity-60 grayscale" />
-        <img src="../images/logo4.png" alt="logo4" class="h-12 opacity-60 grayscale" />
-        <img src="../images/logo5.png" alt="logo5" class="h-12 opacity-60 grayscale" />
-        <img src="../images/logo6.png" alt="logo6" class="h-12 opacity-60 grayscale" />
-        <img src="../images/logo7.png" alt="logo7" class="h-12 opacity-60 grayscale" />
-        <img src="../images/logo8.png" alt="logo8" class="h-12 opacity-60 grayscale" />
+        <img src="" alt="logo1" class="h-12 opacity-60 grayscale" />
+        <img src="" alt="logo2" class="h-12 opacity-60 grayscale" />
+        <img src="" alt="logo3" class="h-12 opacity-60 grayscale" />
+        <img src="" alt="logo4" class="h-12 opacity-60 grayscale" />
+        <img src="" alt="logo5" class="h-12 opacity-60 grayscale" />
+        <img src="" alt="logo6" class="h-12 opacity-60 grayscale" />
+        <img src="" alt="logo7" class="h-12 opacity-60 grayscale" />
+        <img src="" alt="logo8" class="h-12 opacity-60 grayscale" />
         <button class="bg-orange-500 text-white px-6 py-2 rounded-lg font-bold ml-4">+ Découvrez les écoles</button>
     </div>
 
@@ -121,7 +117,7 @@ import router from '@/router';
             <a href="#" class="underline font-semibold">DÉCOUVRIR LES MÉTIERS</a>
         </div>
         <div class="flex-1 flex justify-center mt-8 md:mt-0">
-            <img src="../images/cta-girl.png" alt="étudiante" class="h-64 object-contain" />
+            <img src="" alt="étudiante" class="h-64 object-contain" />
         </div>
     </div>
 

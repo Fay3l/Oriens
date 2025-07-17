@@ -7,7 +7,7 @@ import { onMounted, ref } from 'vue';
 import { useUsers } from '@/stores/useUsers';
 import { User } from '@/composables/user';
 import Button from 'primevue/button';
-import ParentDashboard from '@/components/ParentDashboard.vue';
+import ParentDashboardView from '@/views/dashboard/ParentDashboardView.vue';
 import { ResponseQuiz } from '@/composables/questionnaire';
 const usersStore = useUsers();
 
@@ -22,7 +22,7 @@ const handlePageChange = (newPage: string) => {
 onMounted(async () => {
     // Initial setup or data fetching can be done here
     await usersStore.getUser();
-    await usersStore.GetLastQuiz();
+    await usersStore.getLastQuiz();
     resultquiz.value = usersStore.userQuiz;
     console.log('User data:', usersStore.users);
     edituser.value = usersStore?.users;
@@ -34,7 +34,7 @@ onMounted(async () => {
 
 <template>
     <div v-if="edituser.role === 'ParentStudent'">
-        <ParentDashboard></ParentDashboard>
+        <ParentDashboardView></ParentDashboardView>
     </div>
     <div v-else class="m-10">
         <div>
@@ -134,8 +134,22 @@ onMounted(async () => {
 
             </div>
         </div>
-        <div v-else class="">
-            <p>Mes favoris</p>
+        <div v-if="page === 'favoris'" class="flex flex-col gap-4">
+            <p class="font-bold text-xl">Mes favoris</p>
+            <div class="grid grid-cols-3 gap-4">
+                <div class="bg-white rounded-lg p-4 shadow">
+                    <p class="font-bold">Métier 1</p>
+                    <p>Description du métier 1</p>
+                </div>
+                <div class="bg-white rounded-lg p-4 shadow">
+                    <p class="font-bold">Métier 2</p>
+                    <p>Description du métier 2</p>
+                </div>
+                <div class="bg-white rounded-lg p-4 shadow">
+                    <p class="font-bold">Métier 3</p>
+                    <p>Description du métier 3</p>
+                </div>
+            </div>
         </div>
     </div>
 </template>

@@ -44,8 +44,8 @@ const onGoogleSubmit = (e: any) => {
     nextTick(() => {
         window.open('/api/auth/google', '_self');
     });
-    
 };
+
 </script>
 
 <template>

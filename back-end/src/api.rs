@@ -1,7 +1,7 @@
 use crate::{
     add_experience, create_jwt, jobs_search,
     models::{
-        AppState, Claims, ForgotPasswordRequest, GetUser, GetUserQuiz, Job, JobsPagination, MetiersPossibles, OAuthCallback, Questionnaire, ResetPasswordRequest, ResponseQuiz, SearchQuery, Section, User, UserLogin, UserQuiz
+        AppState, Claims, ForgotPasswordRequest, GetUser, GetUserQuiz, Job, JobsPagination, OAuthCallback, Questionnaire, ResetPasswordRequest, ResponseQuiz, SearchQuery, User, UserLogin, UserQuiz
     },
     questionnaire_result,
 };
@@ -27,7 +27,6 @@ pub fn api_routes() -> Router<AppState> {
         .route("/api/login", post(login_user))
         .route("/api/users/{id}", get(get_user).layer(from_fn(validate_token)))
         .route("/api/users/{id}/quiz", get(get_last_quiz).layer(from_fn(validate_token)))
-        // .route("/api/jobs", get(jobs_handler))
         .route("/api/jobs", get(jobs_pagination_handler))
         .route(
             "/api/jobs/search",

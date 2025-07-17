@@ -1,12 +1,13 @@
 import type { UserLogin, UserRegister, ForgotPassword } from "@/composables/auth";
 import router from "@/router";
 import { defineStore } from "pinia";
+import { useUsers } from "./useUsers";
 
+const userStore = useUsers();
 
 export const useAuth = defineStore("useAuth", {
     state: () => ({
         isAuthenticated: false,
-        user: '',
     }),
     actions: {
         async login(userlogin: UserLogin): Promise<boolean> {
@@ -27,6 +28,8 @@ export const useAuth = defineStore("useAuth", {
                 console.log("Login response:", data);
                 localStorage.setItem("id", data.id);
                 localStorage.setItem("token", data.token);
+                await userStore.getUser();
+                this.isAuthenticated = true;
                 router.back();
                 return true;
             } catch (error) {
@@ -86,11 +89,7 @@ export const useAuth = defineStore("useAuth", {
         logout() {
             localStorage.removeItem("token");
             localStorage.removeItem("id");
-            
         },
 
-        isAuthenticated(): boolean {
-            return !!localStorage.getItem("token");
-        },
     },
 })

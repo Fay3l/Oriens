@@ -1,4 +1,3 @@
-import { user } from '@/composables/auth'
 import type { User, UserQuiz } from '@/composables/user'
 import { defineStore } from 'pinia'
 
@@ -36,7 +35,7 @@ export const useUsers = defineStore('users', {
                 this.loading = false
             }
         },
-        async GetLastQuiz() {
+        async getLastQuiz() {
             const id = localStorage.getItem('id')
             const token = localStorage.getItem('token')
             this.loading = true

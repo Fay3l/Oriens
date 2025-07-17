@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Divider from 'primevue/divider';
 import OriensButton from '@/components/button/OriensButton.vue';
-import GroupCardJob from '@/components/GroupCardJob.vue';
+import GroupCardJob from '@/components/jobs/GroupCardJob.vue';
 import InputText from 'primevue/inputtext';
 import { onMounted, ref } from 'vue';
 import { useUsers } from '@/stores/useUsers';

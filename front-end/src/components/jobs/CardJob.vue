@@ -12,7 +12,7 @@ const iconheart = ref('pi pi-heart')
 const dialogvisible = ref(false)
 const props = defineProps({
     job: {
-        type: Jobs,
+        type: {} as Jobs,
         default: () => ({
             nom_metier: '',
             competences: '',
@@ -51,7 +51,7 @@ function handleClick2() {
             <div class="flex flex-col gap-4 items-center ">
                 <button @click="handleClick()">
                     <div>
-                        <img class=" lg:w-29 sm:w-30 h-26 " alt="" src="./../images/jobs_card.svg">
+                        <img class=" lg:w-29 sm:w-30 h-26 " alt="" src="./../../images/jobs_card.svg">
                     </div>
 
                     <div class="flex flex-col items-center gap-1">
@@ -76,7 +76,7 @@ function handleClick2() {
         :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
         <div class="flex flex-col gap-4 items-center ">
             <div>
-                <img class=" lg:w-29 sm:w-30 h-26 " alt="" src="./../images/jobs_card.svg">
+                <img class=" lg:w-29 sm:w-30 h-26 " alt="" src="./../../images/jobs_card.svg">
             </div>
             <div class="flex flex-col items-center gap-1">
                 <!-- Display competences without HTML tags -->

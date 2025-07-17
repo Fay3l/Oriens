@@ -3,7 +3,7 @@ import OriensButton from '@/components/button/OriensButton.vue';
 import { Jobs } from '@/composables/jobs';
 import { IconField, InputIcon, InputText } from 'primevue';
 import { ref, watch } from 'vue';
-import GroupCardJob from '@/components/GroupCardJob.vue';
+import GroupCardJob from '@/components/jobs/GroupCardJob.vue';
 import { useJobs } from '@/stores/useJobs';
 
 const page = ref(1);

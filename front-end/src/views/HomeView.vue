@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import GroupCardJob from '@/components/GroupCardJob.vue';
+import GroupCardJob from '@/components/jobs/GroupCardJob.vue';
 import InfiniteScroll from '@/components/InfiniteScroll.vue';
 import OriensButton from '@/components/button/OriensButton.vue';
 import router from '@/router';

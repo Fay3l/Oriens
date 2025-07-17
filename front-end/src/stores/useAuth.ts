@@ -1,9 +1,8 @@
 import type { UserLogin, UserRegister, ForgotPassword } from "@/composables/auth";
 import router from "@/router";
 import { defineStore } from "pinia";
-import { useUsers } from "./useUsers";
 
-const userStore = useUsers();
+
 
 export const useAuth = defineStore("useAuth", {
     state: () => ({
@@ -28,7 +27,6 @@ export const useAuth = defineStore("useAuth", {
                 console.log("Login response:", data);
                 localStorage.setItem("id", data.id);
                 localStorage.setItem("token", data.token);
-                await userStore.getUser();
                 this.isAuthenticated = true;
                 router.back();
                 return true;
@@ -89,6 +87,8 @@ export const useAuth = defineStore("useAuth", {
         logout() {
             localStorage.removeItem("token");
             localStorage.removeItem("id");
+            this.isAuthenticated = false;
+            router.push({ name: "home" });
         },
 
     },

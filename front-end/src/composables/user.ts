@@ -1,8 +1,8 @@
 export class User {
     id: string;
     email: string;
-    firstName: string;
-    lastName: string;
+    firstname: string;
+    lastname: string;
     role: string;
     badges: string;
     experience: string;
@@ -15,8 +15,8 @@ export class User {
     constructor(options: {
         id: string;
         email: string;
-        firstName: string;
-        lastName: string;
+        firstname: string;
+        lastname: string;
         role: string;
         badges: string;
         experience: string;
@@ -29,8 +29,8 @@ export class User {
     }) {
         this.id = options.id;
         this.email = options.email;
-        this.firstName = options.firstName;
-        this.lastName = options.lastName;
+        this.firstname = options.firstname;
+        this.lastname = options.lastname;
         this.role = options.role;
         this.badges = options.badges;
         this.experience = options.experience;

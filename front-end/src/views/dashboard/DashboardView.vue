@@ -109,11 +109,11 @@ onMounted(async () => {
             <div class="flex flex-col gap-4">
                 <div class="flex flex-col gap-2">
                     <label for="firstname">Prénom</label>
-                    <InputText id="firstname" v-model="edituser.firstName" :disabled="edit" />
+                    <InputText id="firstname" v-model="edituser.firstname" :disabled="edit" />
                 </div>
                 <div class="flex flex-col gap-2">
                     <label for="lastname">Nom</label>
-                    <InputText id="lastname" v-model="edituser.lastName" />
+                    <InputText id="lastname" v-model="edituser.lastname" />
                 </div>
                 <div class="flex flex-col gap-2">
                     <label for="email">Email</label>

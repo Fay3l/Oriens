@@ -23,6 +23,7 @@ const jobs = () => {
 }
 onMounted(async () => {
     await userStore.getUser();
+    
 });
 const animationbutton = "p-2 rounded-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
 </script>
@@ -37,7 +38,7 @@ const animationbutton = "p-2 rounded-lg hover:shadow-xl transform hover:-transla
         </div>
         <div class="flex gap-6 flex-row items-center lg:text-base sm:text-xs">
             <div v-if="id">
-                <button class="hover:font-bold" @click="dashboard">Bonjour {{ userStore.users.firstName }}</button>
+                <button class="hover:font-bold" @click="dashboard">Bonjour {{ userStore.users.firstname }}</button>
             </div>
             <div v-else>
                 <button class="hover:font-bold"  @click="login">Se connecter</button>

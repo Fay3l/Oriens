@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 import OriensButton from './button/OriensButton.vue';
 import { useRouter } from 'vue-router';
 import { useUsers } from '@/stores/useUsers';
@@ -38,7 +38,7 @@ const animationbutton = "p-2 rounded-lg hover:shadow-xl transform hover:-transla
         </div>
         <div class="flex gap-6 flex-row items-center lg:text-base sm:text-xs">
             <div v-if="id">
-                <button class="hover:font-bold" @click="dashboard">Bonjour {{ userStore.users.firstname }}</button>
+                <button class="hover:font-bold" @click="dashboard">Bonjour, {{ userStore.users.firstname }}</button>
             </div>
             <div v-else>
                 <button class="hover:font-bold"  @click="login">Se connecter</button>
@@ -48,5 +48,3 @@ const animationbutton = "p-2 rounded-lg hover:shadow-xl transform hover:-transla
     </header>
 
 </template>
-
-<style lang="css" scoped></style>

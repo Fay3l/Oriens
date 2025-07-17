@@ -10,8 +10,8 @@ import router from '@/router';
 
 <template>
     <div
-        class="flex flex-row justify-around items-center rounded-b-5xl gap-10 m-3 xs:flex-col gap-6 rounded-b-none items-center m-5 ">
-        <div class="flex flex-col items-center lg:text-3xl gap-3 sm:text-2xl gap-3 xs:text-lg">
+        class="flex flex-row justify-around items-center rounded-b-5xl gap-10 mb-10  xs:flex-col gap-6 rounded-b-none items-center m-5 ">
+        <div class="flex flex-col  items-center lg:text-4xl gap-3 sm:text-2xl gap-3 xs:text-lg">
             <div class="flex flex-col gap-6">
                 <div class=" font-bold flex flex-col gap-5 ">
                     <p class="font-jakarta">Un accompagnement</p>
@@ -39,9 +39,8 @@ import router from '@/router';
                 </div>
             </div>
         </div>
-
-        <div class=" flex items-end infinite-scroll"> 
-            <img alt="" class="mt-5 w-full hidden sm:visible" src="./../images/Image.svg">
+        <div class="hidden md:flex"> 
+            <img alt="" class="mt-5 w-full " src="./../images/Image.svg">
         </div>
     </div>
     <div class="overflow-hidden">

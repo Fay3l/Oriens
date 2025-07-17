@@ -16,33 +16,16 @@ const disabled = ref(false);
 watch(page, newValue => {
     checkdisabled();
 });
-function searchJobs() {
-    console.log("Search: ", search.value);
-    console.log(localStorage.getItem('token'))
-    fetch(`http://localhost:3000/api/jobs/search?search=${search.value}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token'),
-        },
-    })
-        .then((response) => response.json())
-        .then((data: Jobs[]) => {
-            jobs.value = data;
-        })
-        .catch((error) => {
-            console.log('Error fetching jobs:', error);
-            return [] as Jobs[]
-        });
-}
 
-const nextpage = async ()=>{
+
+const nextpage = async () => {
     if (disabled.value) return;
     page.value++;
     console.log("Page: ", page.value);
     await jobstore.getJobs(page.value, perPage.value);
     jobs.value = jobstore.collection;
 }
-const previouspage = async()=>{
+const previouspage = async () => {
     if (page.value <= 1) return;
     page.value--;
     console.log("Page: ", page.value);
@@ -50,10 +33,27 @@ const previouspage = async()=>{
     jobs.value = jobstore.collection;
 
 }
+async function searchJobs(search: string): Promise<Jobs[]> {
+    try {
+        const response = await fetch(`http://localhost:3000/api/jobs/search?search=${search}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        const data: Jobs[] = await response.json();
+        jobs.value = data;
+        console.log('Jobs searched:', jobs.value);
+        return data;
+    } catch (error) {
+        console.error('Error searching jobs:', error);
+        return [];
+    }
+}
 const checkdisabled = () => {
     if (page.value <= 1) {
         disabled.value = true;
-    } 
+    }
     else {
         disabled.value = false;
     }
@@ -80,23 +80,23 @@ const checkdisabled = () => {
         <img alt="" src="./../../images/Oriens _ New/Image-1.svg">
     </div>
     <div class="flex flex-col items-center justify-center text-center m-10 gap-4">
-        <OriensButton label="DÉCOUVRIR LES MÉTIERS"></OriensButton>
         <IconField>
             <InputIcon>
                 <i class="pi pi-search" />
             </InputIcon>
-            <InputText v-model="search" @change="searchJobs()" placeholder="Search" />
+            <InputText v-model="search" @keydown="searchJobs(search)" placeholder="Peintre" />
         </IconField>
     </div>
     <div>
-        <GroupCardJob class="grid grid-cols-1 justify-center gap-6 mr-40 ml-40 mb-5 md:grid-cols-4" :page="page" :jobs="jobs" :perpage="perPage"></GroupCardJob>
+        <GroupCardJob class="grid grid-cols-1 justify-center gap-6 mr-40 ml-40 mb-5 md:grid-cols-4" :page="page"
+            :jobs="jobs" :perpage="perPage"></GroupCardJob>
     </div>
     <div class="flex justify-center items-center gap-20 p-10 mt-10">
-        <button @click="previouspage" >
-            <span class="pi pi-angle-left" ></span>
+        <button @click="previouspage">
+            <span class="pi pi-angle-left"></span>
         </button>
-        <button @click="nextpage" >
-            <span class="pi pi-angle-right " ></span>
+        <button @click="nextpage">
+            <span class="pi pi-angle-right "></span>
         </button>
     </div>
 

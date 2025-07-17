@@ -2,9 +2,12 @@ import { Jobs } from '@/composables/jobs';
 import { defineStore } from 'pinia';
 
 export const useJobs = defineStore('useJobs', {
+
+     
     state: () => ({
         collection: [] as Jobs[],
     }),
+    
     actions: {
         async getJobs(page: number, perPage: number): Promise<Jobs[]> {
             try {
@@ -17,6 +20,7 @@ export const useJobs = defineStore('useJobs', {
                 console.error('Error fetching jobs:', error);
                 return [];
             }
-        }
+        },
+        
     }
 })

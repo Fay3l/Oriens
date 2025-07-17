@@ -53,12 +53,15 @@ async fn main() {
 
 pub async fn jobs_search(query: &str) -> api::Result<Vec<Job>> {
     let file = tokio::fs::read_to_string("Onisep_Ideo_Fiches_Metiers_09122024.xml").await?;
-    let res: Jobs = from_str(&file)?;
+    let res: Jobs = from_str(&file)?; 
     let mut items = vec![];
-    for metier in res.metiers {
-        if metier.nom_metier.contains(query) {
-            println!("{:?}", metier);
-            items.push(metier);
+    for job in res.metiers.iter() {
+        if job.nom_metier.contains(query) {
+            println!("{:?}", job);
+            items.push(job.clone());
+            if items.len() >= 16{
+                break; 
+            }
         }
     }
     Ok(items)
@@ -145,9 +148,8 @@ pub async fn questionnaire_result(data: Questionnaire) -> api::Result<ResponseQu
     "#;
     let content = format!("Pour la personne qui a répondu au questionnaire, trouver l'adjectif sur les compétences trouvés avec la description ensuite les formations suggérées, les métiers compatibles et les softs skills clés qui correspondent aux réponses. Retourner les métiers et les descriptions en objet JSON. Doit retourner {:?}. {:?}",object_json,data);
     let result = tokio::task::spawn_blocking(|| mistral_chat(content)).await??;
-    let response: ResponseQuiz =
-        serde_json::from_str(&result.choices[0].message.content)
-            .expect("JSON was not well-formatted");
+    let response: ResponseQuiz = serde_json::from_str(&result.choices[0].message.content)
+        .expect("JSON was not well-formatted");
 
     Ok(response)
 }

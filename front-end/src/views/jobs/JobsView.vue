@@ -50,12 +50,12 @@ async function searchJobs(search: string): Promise<Jobs[]> {
         return [];
     }
 }
-const checkdisabled = () => {
+const checkdisabled = (): boolean => {
     if (page.value <= 1) {
-        disabled.value = true;
+        return true;
     }
     else {
-        disabled.value = false;
+        return false;
     }
 }
 </script>
@@ -92,7 +92,7 @@ const checkdisabled = () => {
             :jobs="jobs" :perpage="perPage"></GroupCardJob>
     </div>
     <div class="flex justify-center items-center gap-20 p-10 mt-10">
-        <button @click="previouspage">
+        <button @click="previouspage" :hidden="checkdisabled()">
             <span class="pi pi-angle-left"></span>
         </button>
         <button @click="nextpage">

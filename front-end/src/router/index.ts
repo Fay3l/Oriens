@@ -115,11 +115,13 @@ router.beforeEach((to, from, next) => {
         if (decoded.exp && decoded.exp > now) {
           next();
         } else {
+          localStorage.removeItem('id');
           localStorage.removeItem('token');
           next('/auth/login');
         }
       } catch (e) {
         console.error('JWT decode error:', e);
+        localStorage.removeItem('id');
         localStorage.removeItem('token');
         next('/auth/login');
       }

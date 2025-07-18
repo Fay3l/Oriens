@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router';
 import { useUsers } from '@/stores/useUsers';
 const userStore = useUsers();
 const router = useRouter();
-const id = localStorage.getItem('id');
+const token = localStorage.getItem('token');
 const login = () => {
     router.push({ name: 'login' });
 }
@@ -37,7 +37,7 @@ const animationbutton = "p-2 rounded-lg hover:shadow-xl transform hover:-transla
             <button :class="animationbutton">Nos services</button>
         </div>
         <div class="flex gap-6 flex-row items-center lg:text-base sm:text-xs">
-            <div v-if="id">
+            <div v-if="token">
                 <button class="hover:font-bold" @click="dashboard">Bonjour, {{ userStore.users.firstname }}</button>
             </div>
             <div v-else>

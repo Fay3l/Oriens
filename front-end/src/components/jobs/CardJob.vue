@@ -34,6 +34,10 @@ function truncateText(input: string, length: number): string {
     return input.length > length ? input.substring(0, length) + '...' : input;
 }
 
+function upperletter(input: string): string {
+    return input.charAt(0).toUpperCase() + input.slice(1);
+}
+
 function handleClick() {
     dialogvisible.value = true
 }
@@ -48,15 +52,16 @@ function handleClick2() {
     <Card
         class="border hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
         <template #content>
-            <div class="flex flex-col gap-4 items-center justify-center"> 
+            <div class="flex flex-col gap-4 items-center justify-center">
                 <button @click="handleClick()">
                     <div class="flex justify-center items-center mb-2">
-                        <img class=" max-sm:w-[120px] max-sm:h-[120px] max-md:w-[240px] max-md:h-[240px]  " alt="" src="./../../images/jobs_card.svg">
+                        <img class=" max-sm:w-[120px] max-sm:h-[120px] max-md:w-[240px] max-md:h-[240px]  " alt=""
+                            src="./../../images/jobs_card.svg">
                     </div>
 
                     <div class="flex flex-col items-center gap-1">
                         <div class="flex mb-2">
-                            <p class="text-orange text-base font-bold ">{{ props.job.nom_metier }}</p>
+                            <p class="text-orange text-base font-bold ">{{ upperletter(props.job.nom_metier) }}</p>
                         </div>
                         <p class="font-bold text-base text-black">UX review presentations<i
                                 class="pi pi-arrow-up-right ml-3"></i></p>
@@ -72,7 +77,7 @@ function handleClick2() {
             </div>
         </template>
     </Card>
-    <Dialog v-model:visible="dialogvisible" modal :header="props.job.nom_metier" :style="{ width: '50rem' }"
+    <Dialog v-model:visible="dialogvisible" modal :header="upperletter(props.job.nom_metier)" :style="{ width: '50rem' }"
         :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
         <div class="flex flex-col gap-4 items-center ">
             <div>
@@ -80,10 +85,15 @@ function handleClick2() {
             </div>
             <div class="flex flex-col items-center gap-1">
                 <!-- Display competences without HTML tags -->
-                <p v-html="props.job.competences"></p>
+                <div class="competences-content" v-html="props.job.competences"></div>
             </div>
         </div>
     </Dialog>
 </template>
 
-<style lang="css" scoped></style>
+<style lang="css" >
+.competences-content h5 {
+    @apply font-bold mb-2 mt-2 text-orange;
+}
+
+</style>
